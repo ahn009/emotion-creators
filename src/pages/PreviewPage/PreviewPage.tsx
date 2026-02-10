@@ -1,197 +1,170 @@
-// Preview Page - Live preview before generating the link
-
+// src/pages/PreviewPage/PreviewPage.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
-import { TemplatePreview } from '@/features/templates/components';
-import { Button } from '@/components/ui/button';
-import { useMessageStore } from '@/features/messages/stores/messageStore';
-import { useUIStore } from '@/shared/stores/uiStore';
-import { getShareUrl, copyToClipboard } from '@/shared/lib/share';
-import { ROUTES } from '@/shared/config';
-import { getMessageUrl } from '@/shared/lib/share';
+import { useMessageStore, useMessageStoreHydrated } from '@/features/messages/stores/messageStore';
+import { TemplatePreview } from '@/features/templates/components/TemplatePreview';
 import { MessageData } from '@/features/messages/types/message.types';
-import { ArrowLeft, Check, Copy, ExternalLink, Share } from 'lucide-react';
+import { ROUTES } from '@/shared/config';
+import { toast } from 'sonner'; // FIXED: Use sonner directly
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Copy, ExternalLink, Check, Sparkles, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const PreviewPage = () => {
   const navigate = useNavigate();
-  const { formData, currentTemplate, createMessage, generatedSlug } = useMessageStore();
-  const { showToast } = useUIStore();
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState<MessageData | null>(null);
+  
+  const hasHydrated = useMessageStoreHydrated();
+  const { formData, currentTemplate, generatedSlug, createMessage } = useMessageStore();
+  
+  // Show loading state while hydrating
+  if (!hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading preview...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // Create a preview message object
+  // NOW it's safe to check formData
   useEffect(() => {
-    if (!formData.sender || !formData.receiver || !formData.message) {
-      navigate(ROUTES.CREATE);
+    if (hasHydrated && (!formData.sender || !formData.receiver || !formData.message)) {
+      toast.info('Please create a message first'); // FIXED: Direct sonner call
+      navigate(ROUTES.CREATE, { replace: true });
       return;
     }
 
-    // Create preview message data
-    const previewMessage: MessageData = {
-      id: 'preview',
-      slug: 'preview',
-      template: currentTemplate,
-      data: {
-        sender: formData.sender,
-        receiver: formData.receiver,
-        message: formData.message,
-      },
-      createdAt: new Date().toISOString(),
-      views: 0,
-    };
-    
-    setMessage(previewMessage);
-  }, [formData, currentTemplate, navigate]);
+    if (formData.sender && formData.receiver && formData.message) {
+      const previewMessage: MessageData = {
+        id: 'preview',
+        slug: 'preview',
+        template: currentTemplate,
+        data: {
+          sender: formData.sender,
+          receiver: formData.receiver,
+          message: formData.message,
+        },
+        createdAt: new Date().toISOString(),
+        views: 0,
+      };
+      setMessage(previewMessage);
+    }
+  }, [hasHydrated, formData, currentTemplate, navigate]);
 
   const handlePublish = () => {
     const newMessage = createMessage();
-    showToast({ message: 'Your message page is ready!', type: 'success' });
+    toast.success('Your message page is ready!'); // FIXED
   };
 
   const handleCopyLink = async () => {
     if (generatedSlug) {
-      const url = getShareUrl(generatedSlug);
-      const success = await copyToClipboard(url);
-      if (success) {
+      const url = `${window.location.origin}/message/${generatedSlug}`;
+      try {
+        await navigator.clipboard.writeText(url);
         setCopied(true);
-        showToast({ message: 'Link copied to clipboard!', type: 'success' });
+        toast.success('Link copied to clipboard!'); // FIXED
         setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        toast.error('Failed to copy link'); // FIXED
       }
     }
   };
 
   const handleViewPage = () => {
     if (generatedSlug) {
-      navigate(getMessageUrl(generatedSlug));
+      navigate(`/message/${generatedSlug}`);
     }
   };
 
   if (!message) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Preparing preview...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <PageShell showNavbar={!generatedSlug}>
-      <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8">
         {!generatedSlug ? (
-          // Preview mode before publishing
-          <div className="relative">
-            {/* Preview header */}
-            <div className="fixed top-16 left-0 right-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-              <Container>
-                <div className="flex items-center justify-between h-16">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate(ROUTES.CREATE)}
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Edit
-                  </Button>
-                  
-                  <span className="text-sm text-text-muted">Preview Mode</span>
-                  
-                  <Button
-                    variant="gradient"
-                    size="sm"
-                    onClick={handlePublish}
-                  >
-                    Publish & Get Link
-                  </Button>
-                </div>
-              </Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl font-bold tracking-tight">Preview Your Message</h1>
+              <p className="text-muted-foreground">
+                This is how your message will look to {formData.receiver}
+              </p>
             </div>
 
-            {/* Preview content */}
-            <div className="pt-16">
+            <Card className="overflow-hidden shadow-2xl">
               <TemplatePreview message={message} />
+            </Card>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button variant="outline" onClick={() => navigate(ROUTES.CREATE)}>
+                Edit Message
+              </Button>
+              <Button onClick={handlePublish} className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                Publish & Share
+              </Button>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          // Success state after publishing
-          <div className="flex items-center justify-center min-h-screen py-20">
-            <Container size="sm">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="glass-card p-8 rounded-3xl text-center"
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring' }}
-                  className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-6"
-                >
-                  <Check className="w-10 h-10 text-white" />
-                </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center space-y-6"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
+              <Check className="h-8 w-8 text-green-600" />
+            </div>
+            
+            <h2 className="text-3xl font-bold">Your Page is Live! 🎉</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Share this link with someone special
+            </p>
 
-                <h1 className="font-display text-3xl font-bold mb-2">
-                  Your Page is Live! 🎉
-                </h1>
-                <p className="text-text-secondary mb-8">
-                  Share this link with someone special
-                </p>
-
-                {/* Link display */}
-                <div className="bg-glass-bg rounded-xl p-4 mb-6 flex items-center gap-3">
-                  <input
-                    type="text"
-                    readOnly
-                    value={getShareUrl(generatedSlug)}
-                    className="flex-1 bg-transparent text-sm text-text-secondary truncate outline-none"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleCopyLink}
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="gradient"
-                    className="flex-1"
-                    onClick={handleCopyLink}
-                  >
-                    <Share className="w-4 h-4" />
-                    Copy Link
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleViewPage}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    View Page
-                  </Button>
-                </div>
-
-                <Button
-                  variant="ghost"
-                  className="mt-6"
-                  onClick={() => {
-                    useMessageStore.getState().resetForm();
-                    navigate(ROUTES.CREATE);
-                  }}
-                >
-                  Create Another
+            <Card className="p-4 max-w-md mx-auto">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/message/${generatedSlug}`}
+                  className="flex-1 bg-transparent border-none outline-none text-sm text-muted-foreground"
+                />
+                <Button size="sm" variant="ghost" onClick={handleCopyLink}>
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
-              </motion.div>
-            </Container>
-          </div>
+              </div>
+            </Card>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button variant="outline" onClick={handleCopyLink} className="gap-2">
+                <Copy className="h-4 w-4" />
+                {copied ? 'Copied!' : 'Copy Link'}
+              </Button>
+              <Button onClick={handleViewPage} className="gap-2">
+                <ExternalLink className="h-4 w-4" />
+                View Page
+              </Button>
+            </div>
+          </motion.div>
         )}
       </div>
-    </PageShell>
+    </div>
   );
 };
 

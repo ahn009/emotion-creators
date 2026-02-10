@@ -1,20 +1,18 @@
-import { ReactNode } from 'react';
+// src/app/providers/AppProviders.tsx
 import { QueryProvider } from './QueryProvider';
 import { ThemeProvider } from './ThemeProvider';
-import { AuthProvider } from '@/features/auth';
+import { AuthProvider } from '@/features/auth/hooks/useAuth';
+import { Toaster } from '@/components/ui/sonner';
 
-interface AppProvidersProps {
-  children: ReactNode;
-}
-
-export function AppProviders({ children }: AppProvidersProps) {
+export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <QueryProvider>
-      <AuthProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <AuthProvider>
           {children}
-        </ThemeProvider>
-      </AuthProvider>
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryProvider>
   );
 }
