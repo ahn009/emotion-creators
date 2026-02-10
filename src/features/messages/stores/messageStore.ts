@@ -1,10 +1,10 @@
 // src/features/messages/stores/messageStore.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { TemplateType, MessageData } from '@/shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Define the form data type locally since it's not in shared types
+// Define FormData locally since it's not in shared types
 interface FormData {
   sender: string;
   receiver: string;
@@ -94,22 +94,18 @@ export const useMessageStore = create<MessageState>()(
     }),
     {
       name: 'emotion-creator-messages',
-      // FIXED: Properly typed onRehydrateStorage
-      onRehydrateStorage: () => {
-        return (state, error) => {
-          if (error) {
-            console.error('Message store hydration error:', error);
-          } else {
-            console.log('Message store hydrated successfully');
-          }
-          // Always mark as hydrated after rehydration attempt
-          useMessageStore.getState().setHasHydrated(true);
-        };
+      storage: createJSONStorage(() => localStorage),
+      skipHydration: false,
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setHasHydrated(true);
+        }
       },
     }
   )
 );
 
+// FIXED: Create the hydration hook
 export const useMessageStoreHydrated = () => {
   return useMessageStore((state) => state._hasHydrated);
 };
