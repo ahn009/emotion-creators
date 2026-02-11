@@ -46,11 +46,11 @@ export default function SignUpForm() {
       await signUp(email, password, true); // true = send verification email
       setShowVerificationMessage(true);
       toast.success('Account created! Please check your email to verify your account.');
-      
-      // Show verification message for 5 seconds then redirect
+
+      // Redirect to verification page after brief delay
       setTimeout(() => {
-        navigate(ROUTES.CREATE);
-      }, 5000);
+        navigate(ROUTES.VERIFY_EMAIL);
+      }, 3000);
     } catch (error) {
       toast.error((error as Error).message);
       setLoading(false);
@@ -110,15 +110,15 @@ export default function SignUpForm() {
               </div>
               
               <p className="text-text-muted text-sm mb-6">
-                Redirecting you to the app in a few seconds...
+                Redirecting you to verify your email...
               </p>
-              
+
               <Button
                 variant="gradient"
-                onClick={() => navigate(ROUTES.CREATE)}
+                onClick={() => navigate(ROUTES.VERIFY_EMAIL)}
                 className="w-full"
               >
-                Continue to App
+                Verify Email
               </Button>
             </motion.div>
           </Container>

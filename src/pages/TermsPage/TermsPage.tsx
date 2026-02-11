@@ -1,9 +1,11 @@
 // Terms of Service Page
 
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { PageShell } from '@/components/layout';
 import { Container, Section } from '@/components/common';
 import { FileText, Shield, AlertCircle } from 'lucide-react';
+import { ROUTES } from '@/shared/config/constants';
 
 const TermsPage = () => {
   return (
@@ -84,7 +86,7 @@ const TermsPage = () => {
                 <h2 className="font-display text-2xl font-bold mb-4">3. Privacy and Data</h2>
                 <div className="space-y-4 text-text-secondary">
                   <p>
-                    Your privacy is important to us. Please review our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> to understand how we collect, use, and protect your information.
+                    Your privacy is important to us. Please review our <Link to={ROUTES.PRIVACY} className="text-primary hover:underline">Privacy Policy</Link> to understand how we collect, use, and protect your information.
                   </p>
                   <p>
                     <strong className="text-foreground">3.1 Data Collection:</strong> We collect minimal data necessary to provide the Service, including email addresses for account creation and analytics data to improve the Service.

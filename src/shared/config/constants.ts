@@ -6,6 +6,12 @@ export const ROUTES = {
   PREVIEW: '/preview',
   MESSAGE: '/message',
   TEMPLATES: '/templates',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
+  COOKIE_POLICY: '/cookies',
+  CONTACT: '/contact',
+  FORGOT_PASSWORD: '/forgot-password',
+  VERIFY_EMAIL: '/verify-email',
 } as const;
 
 export const APP_CONFIG = {

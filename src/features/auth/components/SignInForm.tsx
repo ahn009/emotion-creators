@@ -143,6 +143,16 @@ export default function SignInForm() {
                 </button>
               </div>
 
+              {/* Forgot Password */}
+              <div className="flex justify-end">
+                <Link
+                  to={ROUTES.FORGOT_PASSWORD}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               {/* Terms and Privacy Checkbox */}
               <div className="flex items-start gap-3 pt-2">
                 <Checkbox

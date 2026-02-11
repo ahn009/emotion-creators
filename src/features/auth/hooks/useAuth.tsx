@@ -11,6 +11,8 @@ import {
   signInWithRedirect,
   getRedirectResult,
   browserPopupRedirectResolver,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
   AuthError,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -24,6 +26,8 @@ interface AuthContextType {
   signInWithGoogle: (useRedirect?: boolean) => Promise<void>;
   signOut: () => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  confirmReset: (oobCode: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -215,6 +219,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Password reset email sent');
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      const errorMessages: Record<string, string> = {
+        'auth/user-not-found': 'No account found with this email address',
+        'auth/invalid-email': 'Invalid email address',
+        'auth/too-many-requests': 'Too many attempts. Please try again later',
+      };
+      throw new Error(errorMessages[error.code] || error.message || 'Failed to send reset email');
+    }
+  };
+
+  const confirmReset = async (oobCode: string, newPassword: string) => {
+    try {
+      await confirmPasswordReset(auth, oobCode, newPassword);
+      console.log('Password reset confirmed');
+    } catch (error: any) {
+      console.error('Confirm reset error:', error);
+      const errorMessages: Record<string, string> = {
+        'auth/expired-action-code': 'Reset link has expired. Please request a new one.',
+        'auth/invalid-action-code': 'Invalid reset link. Please request a new one.',
+        'auth/weak-password': 'Password should be at least 6 characters.',
+      };
+      throw new Error(errorMessages[error.code] || error.message || 'Failed to reset password');
+    }
+  };
+
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
@@ -228,15 +262,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading: loading || isRedirectPending, 
+    <AuthContext.Provider value={{
+      user,
+      loading: loading || isRedirectPending,
       isRedirectPending,
-      signIn, 
-      signUp, 
-      signInWithGoogle, 
-      signOut, 
-      sendVerificationEmail 
+      signIn,
+      signUp,
+      signInWithGoogle,
+      signOut,
+      sendVerificationEmail,
+      resetPassword,
+      confirmReset,
     }}>
       {children}
     </AuthContext.Provider>

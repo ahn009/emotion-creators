@@ -21,9 +21,10 @@ const footerLinks = {
     { label: 'How It Works', href: '/#how-it-works' },
   ],
   company: [
-    { label: 'About', href: '#' },
-    { label: 'Privacy', href: '#' },
-    { label: 'Terms', href: '#' },
+    { label: 'Privacy Policy', href: ROUTES.PRIVACY },
+    { label: 'Terms of Service', href: ROUTES.TERMS },
+    { label: 'Cookie Policy', href: ROUTES.COOKIE_POLICY },
+    { label: 'Contact & Support', href: ROUTES.CONTACT },
   ],
 };
 
