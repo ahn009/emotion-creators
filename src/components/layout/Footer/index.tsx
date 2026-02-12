@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, Logo } from '@/components/common';
 import { ROUTES } from '@/shared/config/constants';
-import { Heart, Github, Twitter, Mail, ArrowUpRight } from 'lucide-react';
+import { Heart, Github, Twitter, Mail, ArrowUpRight, ArrowUp } from 'lucide-react';
 
 // Register GSAP plugins safely only in browser environment
 if (typeof window !== 'undefined') {
@@ -114,12 +114,25 @@ export const Footer = () => {
           </div>
         </div>
 
+        {/* Back to top */}
+        <div className="footer-animate flex justify-center mb-8">
+          <motion.button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            whileHover={{ scale: 1.1, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground hover:border-primary/40 transition-all"
+          >
+            <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+            <span className="text-sm font-medium">Back to top</span>
+          </motion.button>
+        </div>
+
         {/* Bottom bar */}
         <div className="footer-animate pt-8 border-t border-glass-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-text-muted text-sm">
             © {new Date().getFullYear()} EmotionCreator. All rights reserved.
           </p>
-          <motion.p 
+          <motion.p
             className="flex items-center gap-1.5 text-text-muted text-sm"
             whileHover={{ scale: 1.05 }}
           >

@@ -24,6 +24,7 @@ interface MessageState {
   resetForm: () => void;
   createMessage: () => MessageData;
   getMessage: (slug: string) => MessageData | undefined;
+  deleteMessage: (id: string) => void;
   setHasHydrated: (state: boolean) => void;
 }
 
@@ -88,6 +89,12 @@ export const useMessageStore = create<MessageState>()(
 
       getMessage: (slug) => {
         return get().messages.find((m) => m.slug === slug);
+      },
+
+      deleteMessage: (id) => {
+        set((state) => ({
+          messages: state.messages.filter((m) => m.id !== id),
+        }));
       },
 
       setHasHydrated: (state) => set({ _hasHydrated: state }),

@@ -78,6 +78,24 @@ export const Navbar = () => {
 
   const centerNavLinks = user ? AUTH_NAV_LINKS : GUEST_NAV_LINKS;
 
+  const handleHashNavClick = (e: React.MouseEvent, link: NavLink) => {
+    if (!link.isHash) return;
+    e.preventDefault();
+    const hash = link.to.split('#')[1];
+    if (!hash) return;
+
+    if (location.pathname === '/') {
+      // Already on home page — just scroll to the section
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to home first, then scroll after render
+      navigate(link.to);
+    }
+  };
+
   const userInitial = user?.displayName?.charAt(0).toUpperCase()
     || user?.email?.charAt(0).toUpperCase()
     || 'U';
@@ -113,7 +131,12 @@ export const Navbar = () => {
                 ? false
                 : location.pathname === link.to;
               return (
-                <Link key={link.to} to={link.to} className="group relative">
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={(e) => handleHashNavClick(e, link)}
+                  className="group relative"
+                >
                   <Button
                     variant="ghost"
                     size="sm"
@@ -306,7 +329,7 @@ export const Navbar = () => {
                     ? false
                     : location.pathname === link.to;
                   return (
-                    <Link key={link.to} to={link.to}>
+                    <Link key={link.to} to={link.to} onClick={(e) => handleHashNavClick(e, link)}>
                       <motion.div
                         whileTap={{ scale: 0.98 }}
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
