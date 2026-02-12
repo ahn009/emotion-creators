@@ -1,5 +1,3 @@
-// Enhanced Interactive Navbar with Freemium Conversion Strategy
-
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +16,7 @@ import {
   Info,
   Shield,
   Lock,
+  Settings,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth';
 import {
@@ -28,6 +27,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+interface NavLink {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  isHash?: boolean;
+}
+
+const GUEST_NAV_LINKS: NavLink[] = [
+  { to: ROUTES.TEMPLATES, label: 'Templates', icon: Layout },
+  { to: '/#how-it-works', label: 'How it Works', icon: Info, isHash: true },
+  { to: ROUTES.PRIVACY, label: 'Privacy', icon: Shield },
+];
+
+const AUTH_NAV_LINKS: NavLink[] = [
+  { to: ROUTES.TEMPLATES, label: 'Templates', icon: Layout },
+  { to: ROUTES.MY_MESSAGES, label: 'My Messages', icon: FileText },
+];
 
 export const Navbar = () => {
   const location = useLocation();
@@ -45,6 +62,11 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -54,12 +76,11 @@ export const Navbar = () => {
     }
   };
 
-  // Center trust/clarity navigation
-  const centerNavLinks = [
-    { to: ROUTES.TEMPLATES, label: 'Templates', icon: Layout },
-    { to: '/#how-it-works', label: 'How it Works', icon: Info, isHash: true },
-    { to: ROUTES.PRIVACY, label: 'Privacy', icon: Shield },
-  ];
+  const centerNavLinks = user ? AUTH_NAV_LINKS : GUEST_NAV_LINKS;
+
+  const userInitial = user?.displayName?.charAt(0).toUpperCase()
+    || user?.email?.charAt(0).toUpperCase()
+    || 'U';
 
   return (
     <motion.header
@@ -75,7 +96,7 @@ export const Navbar = () => {
     >
       <Container>
         <nav className="flex items-center justify-between py-4">
-          {/* LEFT — Brand Anchor */}
+          {/* LEFT - Logo (single instance, never duplicated) */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -85,7 +106,7 @@ export const Navbar = () => {
             <Logo />
           </motion.div>
 
-          {/* CENTER — Trust / Clarity Nav (hidden on mobile) */}
+          {/* CENTER - Navigation links (auth-aware) */}
           <div className="hidden lg:flex items-center gap-1">
             {centerNavLinks.map((link) => {
               const isActive = link.isHash
@@ -120,9 +141,9 @@ export const Navbar = () => {
             })}
           </div>
 
-          {/* RIGHT — Action & Conversion Zone (desktop) */}
+          {/* RIGHT - Actions (desktop) */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Create Message — dominant primary CTA */}
+            {/* Primary CTA */}
             <Link to={ROUTES.CREATE}>
               <motion.div
                 whileHover={{ scale: 1.05, y: -1 }}
@@ -134,61 +155,81 @@ export const Navbar = () => {
                   className="gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300"
                 >
                   <Sparkles className="w-4 h-4" />
-                  Create Message
+                  {user ? 'Create' : 'Create Message'}
                 </Button>
               </motion.div>
             </Link>
 
             {user ? (
-              /* Authenticated state */
+              /* ---- AUTHENTICATED STATE ---- */
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <motion.div
+                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    className="relative flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary text-white text-sm font-semibold ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 focus:outline-none"
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2 border-glass-border bg-glass-bg hover:bg-glass-bg/80 hover:border-primary/50 transition-all duration-300"
-                    >
-                      <User className="w-4 h-4" />
-                      <span className="max-w-[100px] truncate">
-                        {user.email?.split('@')[0] || 'User'}
-                      </span>
-                    </Button>
-                  </motion.div>
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt="Avatar"
+                        className="w-full h-full rounded-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      userInitial
+                    )}
+                  </motion.button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-56 bg-background/95 backdrop-blur-xl border-glass-border"
+                  sideOffset={8}
+                  className="w-60 bg-background/95 backdrop-blur-xl border-glass-border shadow-xl shadow-black/20 rounded-xl p-1"
                 >
-                  <DropdownMenuLabel className="text-primary">
-                    My Account
-                  </DropdownMenuLabel>
+                  {/* User info header */}
+                  <div className="px-3 py-2.5">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {user.displayName || 'User'}
+                    </p>
+                    <p className="text-xs text-text-secondary truncate">
+                      {user.email}
+                    </p>
+                  </div>
                   <DropdownMenuSeparator className="bg-glass-border" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-glass-bg">
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
+                  <DropdownMenuItem
+                    onClick={() => navigate(ROUTES.PROFILE)}
+                    className="cursor-pointer rounded-lg mx-1 px-3 py-2.5 hover:bg-glass-bg focus:bg-glass-bg transition-colors"
+                  >
+                    <User className="w-4 h-4 mr-3 text-text-secondary" />
+                    My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-glass-bg">
-                    <FileText className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem
+                    onClick={() => navigate(ROUTES.MY_MESSAGES)}
+                    className="cursor-pointer rounded-lg mx-1 px-3 py-2.5 hover:bg-glass-bg focus:bg-glass-bg transition-colors"
+                  >
+                    <FileText className="w-4 h-4 mr-3 text-text-secondary" />
                     My Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate(ROUTES.PROFILE)}
+                    className="cursor-pointer rounded-lg mx-1 px-3 py-2.5 hover:bg-glass-bg focus:bg-glass-bg transition-colors"
+                  >
+                    <Settings className="w-4 h-4 mr-3 text-text-secondary" />
+                    Account Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-glass-border" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
-                    className="cursor-pointer hover:bg-destructive/10 text-destructive focus:text-destructive"
+                    className="cursor-pointer rounded-lg mx-1 px-3 py-2.5 hover:bg-destructive/10 text-destructive focus:text-destructive focus:bg-destructive/10 transition-colors"
                   >
-                    <LogOut className="w-4 h-4 mr-2" />
+                    <LogOut className="w-4 h-4 mr-3" />
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              /* Guest state */
+              /* ---- GUEST STATE ---- */
               <>
-                {/* Sign In — low emphasis */}
                 <Link to={ROUTES.SIGN_IN}>
                   <Button
                     variant="ghost"
@@ -198,8 +239,6 @@ export const Navbar = () => {
                     Sign In
                   </Button>
                 </Link>
-
-                {/* Unlock Features — secondary conversion */}
                 <Link to={ROUTES.SIGN_UP}>
                   <motion.div
                     whileHover={{ scale: 1.03 }}
@@ -244,32 +283,27 @@ export const Navbar = () => {
               className="md:hidden overflow-hidden border-t border-glass-border"
             >
               <div className="py-4 space-y-1">
-                {/* Primary CTA — top of mobile menu */}
-                <Link
-                  to={ROUTES.CREATE}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
+                {/* Primary CTA */}
+                <Link to={ROUTES.CREATE}>
                   <motion.div
                     whileTap={{ scale: 0.98 }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-primary to-secondary text-white transition-all"
                   >
                     <Sparkles className="w-5 h-5" />
-                    <span className="font-medium">Create Message</span>
+                    <span className="font-medium">
+                      {user ? 'Create' : 'Create Message'}
+                    </span>
                   </motion.div>
                 </Link>
 
-                {/* Trust nav links */}
+                {/* Auth-aware navigation links */}
                 {centerNavLinks.map((link) => {
                   const Icon = link.icon;
                   const isActive = link.isHash
                     ? false
                     : location.pathname === link.to;
                   return (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
+                    <Link key={link.to} to={link.to}>
                       <motion.div
                         whileTap={{ scale: 0.98 }}
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
@@ -289,26 +323,50 @@ export const Navbar = () => {
                 <div className="pt-3 mt-2 border-t border-glass-border space-y-1">
                   {user ? (
                     <>
-                      <div className="px-4 py-2 text-sm text-text-secondary">
-                        {user.email}
+                      {/* User info */}
+                      <div className="flex items-center gap-3 px-4 py-2">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary text-white text-xs font-semibold flex-shrink-0">
+                          {user.photoURL ? (
+                            <img
+                              src={user.photoURL}
+                              alt="Avatar"
+                              className="w-full h-full rounded-full object-cover"
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            userInitial
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {user.displayName || 'User'}
+                          </p>
+                          <p className="text-xs text-text-secondary truncate">
+                            {user.email}
+                          </p>
+                        </div>
                       </div>
-                      <Link
-                        to={ROUTES.CREATE}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
+
+                      <Link to={ROUTES.PROFILE}>
                         <motion.div
                           whileTap={{ scale: 0.98 }}
                           className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-glass-bg transition-all"
                         >
-                          <FileText className="w-5 h-5" />
-                          <span className="font-medium">My Messages</span>
+                          <User className="w-5 h-5 text-text-secondary" />
+                          <span className="font-medium">My Profile</span>
+                        </motion.div>
+                      </Link>
+                      <Link to={ROUTES.PROFILE}>
+                        <motion.div
+                          whileTap={{ scale: 0.98 }}
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-glass-bg transition-all"
+                        >
+                          <Settings className="w-5 h-5 text-text-secondary" />
+                          <span className="font-medium">Account Settings</span>
                         </motion.div>
                       </Link>
                       <button
-                        onClick={() => {
-                          handleSignOut();
-                          setIsMobileMenuOpen(false);
-                        }}
+                        onClick={handleSignOut}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-destructive/10 text-destructive transition-all"
                       >
                         <LogOut className="w-5 h-5" />
@@ -317,10 +375,7 @@ export const Navbar = () => {
                     </>
                   ) : (
                     <>
-                      <Link
-                        to={ROUTES.SIGN_IN}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
+                      <Link to={ROUTES.SIGN_IN}>
                         <motion.div
                           whileTap={{ scale: 0.98 }}
                           className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-glass-bg transition-all"
@@ -329,10 +384,7 @@ export const Navbar = () => {
                           <span className="font-medium">Sign In</span>
                         </motion.div>
                       </Link>
-                      <Link
-                        to={ROUTES.SIGN_UP}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
+                      <Link to={ROUTES.SIGN_UP}>
                         <motion.div
                           whileTap={{ scale: 0.98 }}
                           className="flex items-center gap-3 px-4 py-3 rounded-lg border border-primary/30 text-primary transition-all"

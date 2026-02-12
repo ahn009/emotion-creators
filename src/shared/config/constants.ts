@@ -6,6 +6,8 @@ export const ROUTES = {
   PREVIEW: '/preview',
   MESSAGE: '/message',
   TEMPLATES: '/templates',
+  PROFILE: '/profile',
+  MY_MESSAGES: '/my-messages',
   TERMS: '/terms',
   PRIVACY: '/privacy',
   COOKIE_POLICY: '/cookies',

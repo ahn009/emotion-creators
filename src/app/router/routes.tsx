@@ -12,6 +12,8 @@ import { CookiePolicyPage } from '@/pages/CookiePolicyPage/index';
 import { ContactPage } from '@/pages/ContactPage/index';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage/index';
 import { VerifyEmailPage } from '@/pages/VerifyEmailPage/index';
+import { ProfilePage } from '@/pages/ProfilePage';
+import { ProtectedRoute } from './route-guards';
 
 export function AppRoutes() {
   return (
@@ -29,6 +31,10 @@ export function AppRoutes() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
