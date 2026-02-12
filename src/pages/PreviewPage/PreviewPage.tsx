@@ -5,7 +5,7 @@ import { useMessageStore, useMessageStoreHydrated } from '@/features/messages/st
 import { TemplatePreview } from '@/features/templates/components/TemplatePreview';
 import { MessageData } from '@/features/messages/types/message.types';
 import { ROUTES } from '@/shared/config';
-import { toast } from 'sonner'; // FIXED: Use sonner directly
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Copy, ExternalLink, Check, Sparkles, Loader2 } from 'lucide-react';
@@ -15,50 +15,54 @@ const PreviewPage = () => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState<MessageData | null>(null);
-  
+
   const hasHydrated = useMessageStoreHydrated();
   const { formData, currentTemplate, generatedSlug, createMessage } = useMessageStore();
-  
-  // Show loading state while hydrating
-  if (!hasHydrated) {
+
+  // Hook is now called unconditionally (before any early returns)
+  useEffect(() => {
+    if (!hasHydrated) return;
+
+    if (!formData.sender || !formData.receiver || !formData.message) {
+      toast.info('Please create a message first');
+      navigate(ROUTES.CREATE, { replace: true });
+      return;
+    }
+
+    const previewMessage: MessageData = {
+      id: 'preview',
+      slug: 'preview',
+      template: currentTemplate,
+      data: {
+        sender: formData.sender,
+        receiver: formData.receiver,
+        message: formData.message,
+        aiEnhanced: formData.options?.aiEnhanced,
+        musicEnabled: formData.options?.musicEnabled,
+      },
+      createdAt: new Date().toISOString(),
+      views: 0,
+    };
+    setMessage(previewMessage);
+  }, [hasHydrated, formData, currentTemplate, navigate]);
+
+  // Loading state while hydrating or building preview
+  if (!hasHydrated || !message) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading preview...</p>
+          <p className="text-muted-foreground">
+            {!hasHydrated ? 'Loading preview...' : 'Preparing preview...'}
+          </p>
         </div>
       </div>
     );
   }
 
-  // NOW it's safe to check formData
-  useEffect(() => {
-    if (hasHydrated && (!formData.sender || !formData.receiver || !formData.message)) {
-      toast.info('Please create a message first'); // FIXED: Direct sonner call
-      navigate(ROUTES.CREATE, { replace: true });
-      return;
-    }
-
-    if (formData.sender && formData.receiver && formData.message) {
-      const previewMessage: MessageData = {
-        id: 'preview',
-        slug: 'preview',
-        template: currentTemplate,
-        data: {
-          sender: formData.sender,
-          receiver: formData.receiver,
-          message: formData.message,
-        },
-        createdAt: new Date().toISOString(),
-        views: 0,
-      };
-      setMessage(previewMessage);
-    }
-  }, [hasHydrated, formData, currentTemplate, navigate]);
-
   const handlePublish = () => {
-    const newMessage = createMessage();
-    toast.success('Your message page is ready!'); // FIXED
+    createMessage();
+    toast.success('Your message page is ready!');
   };
 
   const handleCopyLink = async () => {
@@ -67,10 +71,10 @@ const PreviewPage = () => {
       try {
         await navigator.clipboard.writeText(url);
         setCopied(true);
-        toast.success('Link copied to clipboard!'); // FIXED
+        toast.success('Link copied to clipboard!');
         setTimeout(() => setCopied(false), 2000);
       } catch (err) {
-        toast.error('Failed to copy link'); // FIXED
+        toast.error('Failed to copy link');
       }
     }
   };
@@ -80,17 +84,6 @@ const PreviewPage = () => {
       navigate(`/message/${generatedSlug}`);
     }
   };
-
-  if (!message) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Preparing preview...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 sm:px-6 lg:px-8">
@@ -131,7 +124,7 @@ const PreviewPage = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
               <Check className="h-8 w-8 text-green-600" />
             </div>
-            
+
             <h2 className="text-3xl font-bold">Your Page is Live! 🎉</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               Share this link with someone special

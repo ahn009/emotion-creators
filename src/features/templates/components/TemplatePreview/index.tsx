@@ -1,7 +1,6 @@
-// Template Preview - renders the correct template based on type
-
+// src/features/templates/components/TemplatePreview/index.tsx
 import React from 'react';
-import { MessageData, TemplateType } from '@/features/messages/types/message.types';
+import { MessageData } from '@/features/messages/types/message.types';
 import { LoveTemplate } from '@/features/templates/templates/LoveTemplate';
 import { SorryTemplate } from '@/features/templates/templates/SorryTemplate';
 import { BirthdayTemplate } from '@/features/templates/templates/BirthdayTemplate';
@@ -10,7 +9,7 @@ interface TemplatePreviewProps {
   message: MessageData;
 }
 
-const templateComponents: Record<TemplateType, React.ComponentType<{ message: MessageData }>> = {
+const templateComponents: Record<string, React.FC<{ message: MessageData }>> = {
   love: LoveTemplate,
   sorry: SorryTemplate,
   birthday: BirthdayTemplate,
@@ -18,5 +17,11 @@ const templateComponents: Record<TemplateType, React.ComponentType<{ message: Me
 
 export const TemplatePreview = ({ message }: TemplatePreviewProps) => {
   const Template = templateComponents[message.template];
+
+  if (!Template) {
+    console.error(`Template not found: ${message.template}`);
+    return <div>Template not found: {message.template}</div>;
+  }
+
   return <Template message={message} />;
 };
