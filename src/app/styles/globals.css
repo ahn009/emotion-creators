@@ -34,6 +34,10 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
@@ -107,6 +111,16 @@
     50% { opacity: 1; }
   }
 
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
   }
@@ -126,5 +140,13 @@
   .animate-twinkle {
     animation: twinkle 3s ease-in-out infinite;
   }
-}
 
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+    background-size: 200% 100%;
+  }
+
+  .animate-gentle-bounce {
+    animation: gentle-bounce 2s ease-in-out infinite;
+  }
+}

@@ -8,7 +8,7 @@ import { ROUTES } from '@/shared/config';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Copy, ExternalLink, Check, Sparkles, Loader2 } from 'lucide-react';
+import { Copy, ExternalLink, Check, Sparkles, Loader2, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const PreviewPage = () => {
@@ -86,26 +86,55 @@ const PreviewPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {!generatedSlug ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            <div className="text-center space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">Preview Your Message</h1>
-              <p className="text-muted-foreground">
-                This is how your message will look to {formData.receiver}
-              </p>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {!generatedSlug ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-0"
+        >
+          {/* Sticky action bar at top */}
+          <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+              <div>
+                <h1 className="text-lg font-semibold tracking-tight">Preview</h1>
+                <p className="text-sm text-muted-foreground">
+                  Scroll to see how {formData.receiver} will experience your message
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" size="sm" onClick={() => navigate(ROUTES.CREATE)}>
+                  Edit
+                </Button>
+                <Button size="sm" onClick={handlePublish} className="gap-2">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Publish
+                </Button>
+              </div>
             </div>
+          </div>
 
-            <Card className="overflow-hidden shadow-2xl">
-              <TemplatePreview message={message} />
-            </Card>
+          {/* Scroll hint */}
+          <div className="flex justify-center py-3 bg-muted/30">
+            <motion.div
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="flex items-center gap-2 text-xs text-muted-foreground"
+            >
+              <ChevronDown className="w-3.5 h-3.5" />
+              <span>Scroll down to preview the full page</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </motion.div>
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Full template preview — no Card wrapper to show the real experience */}
+          <div className="w-full">
+            <TemplatePreview message={message} />
+          </div>
+
+          {/* Bottom action bar */}
+          <div className="sticky bottom-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border/50">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row gap-3 justify-center">
               <Button variant="outline" onClick={() => navigate(ROUTES.CREATE)}>
                 Edit Message
               </Button>
@@ -114,23 +143,25 @@ const PreviewPage = () => {
                 Publish & Share
               </Button>
             </div>
-          </motion.div>
-        ) : (
+          </div>
+        </motion.div>
+      ) : (
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center space-y-6"
+            className="text-center space-y-6 max-w-md w-full"
           >
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
               <Check className="h-8 w-8 text-green-600" />
             </div>
 
-            <h2 className="text-3xl font-bold">Your Page is Live! 🎉</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            <h2 className="text-3xl font-bold">Your Page is Live!</h2>
+            <p className="text-muted-foreground">
               Share this link with someone special
             </p>
 
-            <Card className="p-4 max-w-md mx-auto">
+            <Card className="p-4">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -155,8 +186,8 @@ const PreviewPage = () => {
               </Button>
             </div>
           </motion.div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
