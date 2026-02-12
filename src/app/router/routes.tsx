@@ -13,6 +13,9 @@ import { ContactPage } from '@/pages/ContactPage/index';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage/index';
 import { VerifyEmailPage } from '@/pages/VerifyEmailPage/index';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { AccountSettingsPage } from '@/pages/AccountSettingsPage';
+import { MyMessagesPage } from '@/pages/MyMessagesPage';
+import { TemplatesPage } from '@/pages/TemplatesPage';
 import { ProtectedRoute } from './route-guards';
 
 export function AppRoutes() {
@@ -25,15 +28,18 @@ export function AppRoutes() {
         <Route path="/create" element={<CreatePage />} />
         <Route path="/preview" element={<PreviewPage />} />
         <Route path="/message/:id" element={<MessagePage />} />
+        <Route path="/templates" element={<TemplatesPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/cookies" element={<CookiePolicyPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
-        {/* Protected routes */}
+        {/* Protected routes — require authentication */}
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/account-settings" element={<AccountSettingsPage />} />
+          <Route path="/my-messages" element={<MyMessagesPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

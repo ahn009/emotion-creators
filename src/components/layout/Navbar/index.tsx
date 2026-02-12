@@ -113,7 +113,7 @@ export const Navbar = () => {
                 ? false
                 : location.pathname === link.to;
               return (
-                <Link key={link.to} to={link.to}>
+                <Link key={link.to} to={link.to} className="group relative">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -124,18 +124,21 @@ export const Navbar = () => {
                     }`}
                   >
                     {link.label}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeCenterNav"
-                        className="absolute -bottom-1 left-2 right-2 h-0.5 bg-primary/60 rounded-full"
-                        transition={{
-                          type: 'spring',
-                          stiffness: 380,
-                          damping: 30,
-                        }}
-                      />
-                    )}
                   </Button>
+                  {/* Gradient underline: animated on active, hover-reveal otherwise */}
+                  {isActive ? (
+                    <motion.div
+                      layoutId="activeCenterNav"
+                      className="absolute -bottom-1 left-2 right-2 h-0.5 rounded-full bg-gradient-to-r from-primary via-secondary to-primary"
+                      transition={{
+                        type: 'spring',
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  ) : (
+                    <span className="absolute -bottom-1 left-2 right-2 h-0.5 rounded-full bg-gradient-to-r from-primary via-secondary to-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+                  )}
                 </Link>
               );
             })}
@@ -211,7 +214,7 @@ export const Navbar = () => {
                     My Messages
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => navigate(ROUTES.PROFILE)}
+                    onClick={() => navigate(ROUTES.ACCOUNT_SETTINGS)}
                     className="cursor-pointer rounded-lg mx-1 px-3 py-2.5 hover:bg-glass-bg focus:bg-glass-bg transition-colors"
                   >
                     <Settings className="w-4 h-4 mr-3 text-text-secondary" />
@@ -356,7 +359,7 @@ export const Navbar = () => {
                           <span className="font-medium">My Profile</span>
                         </motion.div>
                       </Link>
-                      <Link to={ROUTES.PROFILE}>
+                      <Link to={ROUTES.ACCOUNT_SETTINGS}>
                         <motion.div
                           whileTap={{ scale: 0.98 }}
                           className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-glass-bg transition-all"

@@ -7,6 +7,7 @@ export const ROUTES = {
   MESSAGE: '/message',
   TEMPLATES: '/templates',
   PROFILE: '/profile',
+  ACCOUNT_SETTINGS: '/account-settings',
   MY_MESSAGES: '/my-messages',
   TERMS: '/terms',
   PRIVACY: '/privacy',
