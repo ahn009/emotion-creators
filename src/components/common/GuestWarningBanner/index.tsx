@@ -1,13 +1,13 @@
-// Simplified GuestWarningBanner
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, X } from 'lucide-react';
+import { useAuth } from '@/features/auth';
 
 export const GuestWarningBanner = () => {
+  const { user, loading } = useAuth();
   const [dismissed, setDismissed] = useState(false);
 
-  if (dismissed) return null;
+  if (loading || user || dismissed) return null;
 
   return (
     <AnimatePresence>
