@@ -1,18 +1,10 @@
 // Enhanced Footer with elegant design and animations
 
-import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, Logo } from '@/components/common';
 import { ROUTES } from '@/shared/config/constants';
 import { Heart, Github, Twitter, Mail, ArrowUpRight, ArrowUp } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const footerLinks = {
   product: [
@@ -28,46 +20,26 @@ const footerLinks = {
   ],
 };
 
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 30 } as const,
+  whileInView: { opacity: 1, y: 0 } as const,
+  viewport: { once: true } as const,
+  transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+});
+
 export const Footer = () => {
-  const footerRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    // Only run GSAP animations if in browser and footerRef is available
-    if (typeof window === 'undefined' || !footerRef.current) return;
-
-    try {
-      gsap.fromTo(
-        footerRef.current.querySelectorAll('.footer-animate'),
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 90%',
-          },
-        }
-      );
-    } catch (error) {
-      console.error('GSAP animation error in Footer:', error);
-    }
-  }, []);
-
   return (
-    <footer ref={footerRef} className="relative border-t border-glass-border overflow-hidden">
+    <footer className="relative border-t border-glass-border overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
-      
+
       <Container className="relative py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
-          <div className="md:col-span-2 footer-animate">
+          <motion.div className="md:col-span-2" {...fadeUp(0)}>
             <Logo showText className="mb-4" />
             <p className="text-text-secondary max-w-sm mb-6">
-              Transform your deepest emotions into beautiful, shareable pages. 
+              Transform your deepest emotions into beautiful, shareable pages.
               One emotion, one page, one link.
             </p>
             <div className="flex items-center gap-4">
@@ -75,10 +47,10 @@ export const Footer = () => {
               <SocialLink href="#" icon={<Github className="w-5 h-5" />} />
               <SocialLink href="#" icon={<Mail className="w-5 h-5" />} />
             </div>
-          </div>
+          </motion.div>
 
           {/* Product Links */}
-          <div className="footer-animate">
+          <motion.div {...fadeUp(0.1)}>
             <h4 className="font-display font-semibold mb-4">Product</h4>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
@@ -93,10 +65,10 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Company Links */}
-          <div className="footer-animate">
+          <motion.div {...fadeUp(0.2)}>
             <h4 className="font-display font-semibold mb-4">Company</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
@@ -111,11 +83,11 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         </div>
 
         {/* Back to top */}
-        <div className="footer-animate flex justify-center mb-8">
+        <motion.div className="flex justify-center mb-8" {...fadeUp(0.3)}>
           <motion.button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             whileHover={{ scale: 1.1, y: -3 }}
@@ -125,10 +97,10 @@ export const Footer = () => {
             <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
             <span className="text-sm font-medium">Back to top</span>
           </motion.button>
-        </div>
+        </motion.div>
 
         {/* Bottom bar */}
-        <div className="footer-animate pt-8 border-t border-glass-border flex flex-col md:flex-row items-center justify-between gap-4">
+        <motion.div className="pt-8 border-t border-glass-border flex flex-col md:flex-row items-center justify-between gap-4" {...fadeUp(0.4)}>
           <p className="text-text-muted text-sm">
             © {new Date().getFullYear()} EmotionCreator. All rights reserved.
           </p>
@@ -138,7 +110,7 @@ export const Footer = () => {
           >
             Made with <Heart className="w-4 h-4 text-love fill-love" /> for emotions
           </motion.p>
-        </div>
+        </motion.div>
       </Container>
     </footer>
   );

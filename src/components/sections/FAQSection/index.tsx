@@ -1,16 +1,9 @@
 // FAQ Section with accordion
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container } from '@/components/common/Container';
 import { ChevronDown, HelpCircle } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const faqs = [
   {
@@ -37,37 +30,9 @@ const faqs = [
 
 export const FAQSection = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    // Only run GSAP animations if in browser and sectionRef is available
-    if (typeof window === 'undefined' || !sectionRef.current) return;
-
-    try {
-      const items = sectionRef.current.querySelectorAll('.faq-item');
-
-      gsap.fromTo(
-        items,
-        { opacity: 0, x: -30 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-          },
-        }
-      );
-    } catch (error) {
-      console.error('GSAP animation error in FAQSection:', error);
-    }
-  }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 relative">
+    <section className="py-24 md:py-32 relative">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Left side - Heading */}
@@ -105,9 +70,13 @@ export const FAQSection = () => {
           {/* Right side - Accordion */}
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="faq-item glass-card rounded-2xl overflow-hidden"
+                className="glass-card rounded-2xl overflow-hidden"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -136,7 +105,7 @@ export const FAQSection = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

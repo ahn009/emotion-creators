@@ -11,8 +11,8 @@ export function LoadingScreen({ isLoading }: LoadingScreenProps) {
         <motion.div
           key="loading-screen"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          exit={{ opacity: 0, scale: 1.02, pointerEvents: 'none' as const }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
           style={{
             position: 'fixed',
             inset: 0,

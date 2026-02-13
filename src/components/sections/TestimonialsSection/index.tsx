@@ -1,16 +1,8 @@
 // Testimonials section with scroll-triggered animations
 
-import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container } from '@/components/common/Container';
 import { Star, Quote } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const testimonials = [
   {
@@ -37,38 +29,8 @@ const testimonials = [
 ];
 
 export const TestimonialsSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    // Only run GSAP animations if in browser and sectionRef is available
-    if (typeof window === 'undefined' || !sectionRef.current) return;
-
-    try {
-      const cards = sectionRef.current.querySelectorAll('.testimonial-card');
-
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 60, rotateX: -10 },
-        {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'back.out(1.2)',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-          },
-        }
-      );
-    } catch (error) {
-      console.error('GSAP animation error in TestimonialsSection:', error);
-    }
-  }, []);
-
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 relative overflow-hidden">
+    <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2" />
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2" />
@@ -105,10 +67,13 @@ export const TestimonialsSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial, i) => (
-            <div
+            <motion.div
               key={testimonial.name}
-              className="testimonial-card glass-card p-8 rounded-3xl relative group"
-              style={{ perspective: '1000px' }}
+              className="glass-card p-8 rounded-3xl relative group"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <Quote className="absolute top-6 right-6 w-8 h-8 text-primary/20" />
               
@@ -131,7 +96,7 @@ export const TestimonialsSection = () => {
                   <Star key={j} className="w-4 h-4 text-birthday fill-birthday" />
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </Container>

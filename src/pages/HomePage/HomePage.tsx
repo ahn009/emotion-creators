@@ -1,9 +1,6 @@
 // Marketing Landing Page - with scrollable sections and GSAP animations
 
-import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PageShell } from '@/components/layout';
 import { Hero } from '@/components/hero';
 import { Container, Section } from '@/components/common';
@@ -11,11 +8,6 @@ import { Reveal } from '@/components/motion';
 import { TestimonialsSection, StatsSection, FAQSection, CTASection } from '@/components/sections';
 import { TEMPLATES } from '@/features/templates/constants';
 import { Heart, Zap, Shield, Share2 } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const features = [
   {
@@ -41,50 +33,13 @@ const features = [
 ];
 
 const HomePage = () => {
-  const pageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Only run GSAP animations if in browser and pageRef is available
-    if (typeof window === 'undefined' || !pageRef.current) {
-      return;
-    }
-
-    try {
-      // Smooth reveal for sections
-      const sections = pageRef.current.querySelectorAll('.gsap-section');
-
-      sections.forEach((section) => {
-        gsap.fromTo(
-          section,
-          { opacity: 0.5 },
-          {
-            opacity: 1,
-            duration: 0.5,
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 80%',
-              end: 'top 20%',
-              scrub: 1,
-            },
-          }
-        );
-      });
-
-      return () => {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      };
-    } catch (error) {
-      console.error('GSAP animation error in HomePage:', error);
-    }
-  }, []);
-
   return (
     <PageShell>
-      <div ref={pageRef}>
+      <div>
         <Hero />
         
         {/* How it works */}
-        <Section id="how-it-works" className="gsap-section bg-gradient-to-b from-background to-background/50">
+        <Section id="how-it-works" className="bg-gradient-to-b from-background to-background/50">
           <Container>
             <Reveal>
               <div className="text-center mb-16">
@@ -176,7 +131,7 @@ const HomePage = () => {
         <TestimonialsSection />
 
         {/* Features */}
-        <Section className="gsap-section bg-gradient-to-b from-background/50 to-background">
+        <Section className="bg-gradient-to-b from-background/50 to-background">
           <Container>
             <Reveal>
               <div className="text-center mb-16">

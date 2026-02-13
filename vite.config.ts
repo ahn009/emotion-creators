@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-animation': ['framer-motion', 'gsap'],
+          'vendor-animation': ['framer-motion'],
           'vendor-firebase': ['firebase/app', 'firebase/auth'],
         },
       },

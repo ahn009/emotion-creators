@@ -1,10 +1,8 @@
 // Create Page - Template selection & message form (MVP flow, no auth required)
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PageShell } from '@/components/layout';
 import { Container } from '@/components/common';
 import { TemplateGrid } from '@/features/templates/components/TemplateGrid';
@@ -15,11 +13,6 @@ import { useMessageStore } from '@/features/messages/stores/messageStore';
 import { ROUTES } from '@/shared/config';
 import { TEMPLATES } from '@/features/templates/constants';
 import { ArrowLeft, ArrowRight, Sparkles, Heart, Palette, PenTool } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 type Step = 'template' | 'message';
 
@@ -33,28 +26,11 @@ const CreatePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('template');
   const { currentTemplate, setTemplate, resetForm } = useMessageStore();
-  const pageRef = useRef<HTMLDivElement>(null);
 
   // Reset form state when entering create page so previous message data doesn't persist
   useEffect(() => {
     resetForm();
   }, [resetForm]);
-
-  useEffect(() => {
-    // Only run GSAP animations if in browser and pageRef is available
-    if (typeof window === 'undefined' || !pageRef.current) return;
-
-    try {
-      // Animate page elements on load
-      gsap.fromTo(
-        pageRef.current.querySelectorAll('.animate-in'),
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out' }
-      );
-    } catch (error) {
-      console.error('GSAP animation error in CreatePage:', error);
-    }
-  }, [step]);
 
   const handleTemplateSelect = () => {
     setStep('message');
@@ -69,7 +45,7 @@ const CreatePage = () => {
 
   return (
     <PageShell showGuestWarning>
-      <div ref={pageRef} className="min-h-screen">
+      <div className="min-h-screen">
         {/* Hero section for Create */}
         <section className="relative py-24 md:py-32 overflow-hidden">
           {/* Background effects */}
@@ -78,7 +54,7 @@ const CreatePage = () => {
           
           <Container size="md" className="relative">
             {/* Progress indicator */}
-            <div className="animate-in flex items-center justify-center gap-4 mb-12">
+            <div className="flex items-center justify-center gap-4 mb-12">
               <motion.div 
                 className={`w-4 h-4 rounded-full transition-all duration-300 ${
                   step === 'template' ? 'bg-primary scale-125 shadow-glow-sm' : 'bg-primary/30'
@@ -110,7 +86,7 @@ const CreatePage = () => {
                   exit={{ opacity: 0, x: 30 }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >
-                  <div className="animate-in text-center mb-12">
+                  <div className="text-center mb-12">
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -128,14 +104,14 @@ const CreatePage = () => {
                     </p>
                   </div>
 
-                  <div className="animate-in">
+                  <div className="">
                     <TemplateGrid
                       selectedTemplate={currentTemplate}
                       onSelect={setTemplate}
                     />
                   </div>
 
-                  <div className="animate-in flex justify-center mt-12">
+                  <div className="flex justify-center mt-12">
                     <Button 
                       variant="gradient" 
                       size="xl"
@@ -157,7 +133,7 @@ const CreatePage = () => {
                   exit={{ opacity: 0, x: -30 }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >
-                  <div className="animate-in">
+                  <div className="">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -169,7 +145,7 @@ const CreatePage = () => {
                     </Button>
                   </div>
 
-                  <div className="animate-in text-center mb-12">
+                  <div className="text-center mb-12">
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -188,7 +164,7 @@ const CreatePage = () => {
                     </p>
                   </div>
 
-                  <div className="animate-in max-w-2xl mx-auto">
+                  <div className="max-w-2xl mx-auto">
                     <div className="glass-card p-8 md:p-10 rounded-3xl mb-8">
                       <MessageForm onSubmit={handleFormSubmit} />
                     </div>

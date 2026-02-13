@@ -2,15 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container } from '@/components/common';
 import { Heart, Send, Users, Sparkles } from 'lucide-react';
-
-// Register GSAP plugins safely only in browser environment
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const stats = [
   {
@@ -77,34 +70,6 @@ export const StatsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
-  useEffect(() => {
-    // Only run GSAP animations if in browser and sectionRef is available
-    if (typeof window === 'undefined' || !sectionRef.current) return;
-
-    try {
-      const items = sectionRef.current.querySelectorAll('.stat-item');
-
-      gsap.fromTo(
-        items,
-        { opacity: 0, scale: 0.8, y: 40 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'back.out(1.4)',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
-          },
-        }
-      );
-    } catch (error) {
-      console.error('GSAP animation error in StatsSection:', error);
-    }
-  }, []);
-
   return (
     <section ref={sectionRef} className="py-24 relative overflow-hidden">
       {/* Gradient background */}
@@ -116,7 +81,11 @@ export const StatsSection = () => {
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                className="stat-item text-center"
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                 whileHover={{ scale: 1.05 }}
               >
                 <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-glass-bg border border-glass-border mb-4 ${stat.color}`}>

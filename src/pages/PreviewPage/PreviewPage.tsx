@@ -17,34 +17,36 @@ const PreviewPage = () => {
   const [message, setMessage] = useState<MessageData | null>(null);
 
   const hasHydrated = useMessageStoreHydrated();
-  const { formData, currentTemplate, generatedSlug, createMessage } = useMessageStore();
+  const formData = useMessageStore((s) => s.formData);
+  const currentTemplate = useMessageStore((s) => s.currentTemplate);
+  const generatedSlug = useMessageStore((s) => s.generatedSlug);
+  const createMessage = useMessageStore((s) => s.createMessage);
 
-  // Hook is now called unconditionally (before any early returns)
+  // Build a preview message from current store data.
+  // Using individual fields as deps ensures React detects changes even
+  // when the formData object reference stays the same (Zustand persist).
+  const { sender, receiver, message: messageText } = formData;
+  const aiEnhanced = formData.options?.aiEnhanced;
+  const musicEnabled = formData.options?.musicEnabled;
+
   useEffect(() => {
     if (!hasHydrated) return;
 
-    if (!formData.sender || !formData.receiver || !formData.message) {
+    if (!sender || !receiver || !messageText) {
       toast.info('Please create a message first');
       navigate(ROUTES.CREATE, { replace: true });
       return;
     }
 
-    const previewMessage: MessageData = {
+    setMessage({
       id: 'preview',
       slug: 'preview',
       template: currentTemplate,
-      data: {
-        sender: formData.sender,
-        receiver: formData.receiver,
-        message: formData.message,
-        aiEnhanced: formData.options?.aiEnhanced,
-        musicEnabled: formData.options?.musicEnabled,
-      },
+      data: { sender, receiver, message: messageText, aiEnhanced, musicEnabled },
       createdAt: new Date().toISOString(),
       views: 0,
-    };
-    setMessage(previewMessage);
-  }, [hasHydrated, formData, currentTemplate, navigate]);
+    });
+  }, [hasHydrated, sender, receiver, messageText, currentTemplate, aiEnhanced, musicEnabled, navigate]);
 
   // Loading state while hydrating or building preview
   if (!hasHydrated || !message) {
