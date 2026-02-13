@@ -59,7 +59,7 @@ export const Footer = () => {
                 label="LinkedIn"
               />
               <SocialLink 
-                href="mailto:your-email@example.com" 
+                href="mailto:ahsan747708@gmail.com" 
                 icon={<Mail className="w-5 h-5" />} 
                 label="Email"
               />
