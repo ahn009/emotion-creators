@@ -58,7 +58,8 @@ export const useMessageStore = create<MessageState>()(
 
       resetForm: () => set({
         formData: initialFormData,
-        generatedSlug: null
+        generatedSlug: null,
+        currentTemplate: 'love',
       }),
 
       createMessage: () => {

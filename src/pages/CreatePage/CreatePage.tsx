@@ -32,8 +32,13 @@ const tips = [
 const CreatePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('template');
-  const { currentTemplate, setTemplate } = useMessageStore();
+  const { currentTemplate, setTemplate, resetForm } = useMessageStore();
   const pageRef = useRef<HTMLDivElement>(null);
+
+  // Reset form state when entering create page so previous message data doesn't persist
+  useEffect(() => {
+    resetForm();
+  }, [resetForm]);
 
   useEffect(() => {
     // Only run GSAP animations if in browser and pageRef is available
