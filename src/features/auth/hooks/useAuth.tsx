@@ -16,6 +16,12 @@ import {
   AuthError,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import type { ActionCodeSettings } from 'firebase/auth';
+
+const getVerificationSettings = (): ActionCodeSettings => ({
+  url: `${window.location.origin}/verify-email`,
+  handleCodeInApp: false,
+});
 
 interface AuthContextType {
   user: User | null;
@@ -130,8 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Sign up successful:', result.user.email);
 
       if (sendVerification && result.user) {
-        await sendEmailVerification(result.user);
-        console.log('Verification email sent');
+        await sendEmailVerification(result.user, getVerificationSettings());
       }
     } catch (error: any) {
       console.error('Sign up error:', error);
@@ -208,15 +213,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendVerificationEmail = async () => {
-    if (user) {
-      try {
-        await sendEmailVerification(user);
-        console.log('Verification email sent');
-      } catch (error) {
-        console.error('Send verification email error:', error);
-        throw error;
-      }
-    }
+    if (!user) throw new Error('No user signed in');
+    await sendEmailVerification(user, getVerificationSettings());
   };
 
   const resetPassword = async (email: string) => {
