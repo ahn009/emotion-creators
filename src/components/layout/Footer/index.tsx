@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Container, Logo } from '@/components/common';
 import { ROUTES } from '@/shared/config/constants';
-import { Heart, Github, Twitter, Mail, ArrowUpRight, ArrowUp } from 'lucide-react';
+import { Heart, Github, Twitter, Linkedin, Mail, ArrowUpRight, ArrowUp } from 'lucide-react';
 
 const footerLinks = {
   product: [
@@ -43,9 +43,26 @@ export const Footer = () => {
               One emotion, one page, one link.
             </p>
             <div className="flex items-center gap-4">
-              <SocialLink href="#" icon={<Twitter className="w-5 h-5" />} />
-              <SocialLink href="#" icon={<Github className="w-5 h-5" />} />
-              <SocialLink href="#" icon={<Mail className="w-5 h-5" />} />
+              <SocialLink 
+                href="https://x.com/Web_Craf" 
+                icon={<Twitter className="w-5 h-5" />} 
+                label="Twitter/X"
+              />
+              <SocialLink 
+                href="https://github.com/ahn009" 
+                icon={<Github className="w-5 h-5" />} 
+                label="GitHub"
+              />
+              <SocialLink 
+                href="https://www.linkedin.com/in/muhammad-ahsan-frontend-dev/" 
+                icon={<Linkedin className="w-5 h-5" />} 
+                label="LinkedIn"
+              />
+              <SocialLink 
+                href="mailto:your-email@example.com" 
+                icon={<Mail className="w-5 h-5" />} 
+                label="Email"
+              />
             </div>
           </motion.div>
 
@@ -108,7 +125,15 @@ export const Footer = () => {
             className="flex items-center gap-1.5 text-text-muted text-sm"
             whileHover={{ scale: 1.05 }}
           >
-            Made with <Heart className="w-4 h-4 text-love fill-love" /> for emotions
+            Made with <Heart className="w-4 h-4 text-love fill-love" /> by{' '}
+            <a 
+              href="https://github.com/ahn009" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors underline underline-offset-2"
+            >
+              Muhammad Ahsan
+            </a>
           </motion.p>
         </motion.div>
       </Container>
@@ -116,11 +141,18 @@ export const Footer = () => {
   );
 };
 
-const SocialLink = ({ href, icon }: { href: string; icon: React.ReactNode }) => (
+interface SocialLinkProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
   <motion.a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
+    aria-label={label}
     className="w-10 h-10 rounded-xl bg-glass-bg border border-glass-border flex items-center justify-center text-text-secondary hover:text-foreground hover:border-primary/50 transition-all"
     whileHover={{ scale: 1.1, y: -2 }}
     whileTap={{ scale: 0.95 }}
