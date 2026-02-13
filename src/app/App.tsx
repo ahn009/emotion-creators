@@ -1,16 +1,24 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppProviders } from '@/app/providers';
 import { AppRoutes } from '@/app/router';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { LoadingScreen } from '@/components/common';
 import '@/app/styles/globals.css';
 
-console.log('App.tsx: Module loaded');
-
 export default function App() {
-  console.log('App.tsx: App component rendering...');
-  
-  try {
-    return (
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    document.getElementById('initial-loading')?.remove();
+    // Allow a brief moment for React to paint, then fade out
+    const timer = setTimeout(() => setLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <>
+      <LoadingScreen isLoading={loading} />
       <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
         <BrowserRouter>
           <ScrollToTop />
@@ -19,9 +27,6 @@ export default function App() {
           </AppProviders>
         </BrowserRouter>
       </div>
-    );
-  } catch (error) {
-    console.error('App.tsx: Error in App component:', error);
-    throw error;
-  }
+    </>
+  );
 }
