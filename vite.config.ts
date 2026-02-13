@@ -24,4 +24,19 @@ export default defineConfig(({ mode }) => ({
       "@/assets": path.resolve(__dirname, "./src/assets"),
     },
   },
+  build: {
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-animation': ['framer-motion', 'gsap'],
+          'vendor-firebase': ['firebase/app', 'firebase/auth'],
+        },
+      },
+    },
+  },
+  esbuild: {
+    drop: mode === "production" ? ["console", "debugger"] : [],
+  },
 }));

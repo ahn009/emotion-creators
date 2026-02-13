@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { TemplateType, MessageData } from '@/shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { sanitizeText } from '@/shared/lib/sanitize';
 
 // Define FormData locally since it's not in shared types
 interface FormData {
@@ -71,9 +72,9 @@ export const useMessageStore = create<MessageState>()(
           slug,
           template: state.currentTemplate,
           data: {
-            sender: state.formData.sender,
-            receiver: state.formData.receiver,
-            message: state.formData.message,
+            sender: sanitizeText(state.formData.sender),
+            receiver: sanitizeText(state.formData.receiver),
+            message: sanitizeText(state.formData.message),
             ...state.formData.options,
           },
           createdAt: new Date().toISOString(),

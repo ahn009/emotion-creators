@@ -11,7 +11,6 @@ export default function App() {
 
   useEffect(() => {
     document.getElementById('initial-loading')?.remove();
-    // Allow a brief moment for React to paint, then fade out
     const timer = setTimeout(() => setLoading(false), 100);
     return () => clearTimeout(timer);
   }, []);

@@ -1,26 +1,30 @@
 import { Routes, Route } from 'react-router-dom';
-import { Suspense } from 'react';
-import { HomePage } from '@/pages/HomePage/index';
-import { SignInPage, SignUpPage } from '@/pages/AuthPages/index';
-import { CreatePage } from '@/pages/CreatePage/index';
-import { MessagePage } from '@/pages/MessagePage/index';
-import { PreviewPage } from '@/pages/PreviewPage/index';
-import { NotFoundPage } from '@/pages/NotFoundPage/index';
-import { TermsPage } from '@/pages/TermsPage/index';
-import { PrivacyPage } from '@/pages/PrivacyPage/index';
-import { CookiePolicyPage } from '@/pages/CookiePolicyPage/index';
-import { ContactPage } from '@/pages/ContactPage/index';
-import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage/index';
-import { VerifyEmailPage } from '@/pages/VerifyEmailPage/index';
-import { ProfilePage } from '@/pages/ProfilePage';
-import { AccountSettingsPage } from '@/pages/AccountSettingsPage';
-import { MyMessagesPage } from '@/pages/MyMessagesPage';
-import { TemplatesPage } from '@/pages/TemplatesPage';
+import { Suspense, lazy } from 'react';
 import { ProtectedRoute } from './route-guards';
+import { PageFallback } from '@/components/common/PageFallback';
+
+// Route-based code splitting - each page loads on demand
+const HomePage = lazy(() => import('@/pages/HomePage/HomePage'));
+const SignInPage = lazy(() => import('@/pages/AuthPages/SignInPage'));
+const SignUpPage = lazy(() => import('@/pages/AuthPages/SignUpPage'));
+const CreatePage = lazy(() => import('@/pages/CreatePage/CreatePage'));
+const MessagePage = lazy(() => import('@/pages/MessagePage/MessagePage'));
+const PreviewPage = lazy(() => import('@/pages/PreviewPage/PreviewPage'));
+const TemplatesPage = lazy(() => import('@/pages/TemplatesPage/TemplatesPage'));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage/ProfilePage'));
+const AccountSettingsPage = lazy(() => import('@/pages/AccountSettingsPage/AccountSettingsPage'));
+const MyMessagesPage = lazy(() => import('@/pages/MyMessagesPage/MyMessagesPage'));
+const TermsPage = lazy(() => import('@/pages/TermsPage/TermsPage'));
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage/PrivacyPage'));
+const CookiePolicyPage = lazy(() => import('@/pages/CookiePolicyPage/CookiePolicyPage'));
+const ContactPage = lazy(() => import('@/pages/ContactPage/ContactPage'));
+const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage/ForgotPasswordPage'));
+const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmailPage/VerifyEmailPage'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage/NotFoundPage'));
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<div className="p-8 text-center">Loading page...</div>}>
+    <Suspense fallback={<PageFallback />}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/signin" element={<SignInPage />} />
