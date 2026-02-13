@@ -1,6 +1,6 @@
 // Based on spec.md Section 6.3 - TypeScript Types
 
-export type TemplateType = 'love' | 'sorry' | 'birthday';
+export type TemplateType = 'love' | 'sorry' | 'birthday' | 'gratitude' | 'congratulations' | 'encouragement' | 'miss-you' | 'friendship' | 'get-well';
 
 export interface MessageData {
   id: string;

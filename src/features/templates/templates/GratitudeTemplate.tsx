@@ -1,90 +1,25 @@
-// Birthday Template - Joyful, Vibrant, Celebratory
+// Gratitude Template - Warm, Golden, Heartfelt
 // 3-section minimal visual experience
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { MessageData } from '@/shared/types';
 import { cn } from '@/shared/lib/cn';
-import { Sparkles, Star, PartyPopper, Cake } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Heart, Sparkles, HandHeart } from 'lucide-react';
+import { useRef } from 'react';
 import { ScrollProgress } from '@/components/motion/ScrollProgress';
 import { ParticleBackground } from '@/components/motion/ParticleBackground';
 
-interface BirthdayTemplateProps {
+interface GratitudeTemplateProps {
   message: MessageData;
 }
 
-const Balloon = ({ color, delay, x }: { color: string; delay: number; x: string }) => (
-  <motion.div
-    className="absolute bottom-0 pointer-events-none"
-    style={{ left: x }}
-    initial={{ y: '100%', opacity: 0 }}
-    whileInView={{ y: '-120%', opacity: [0, 0.6, 0.6, 0] }}
-    viewport={{ once: true }}
-    transition={{ duration: 8, delay, ease: 'easeOut' }}
-  >
-    <div className={cn('w-8 h-10 rounded-full', color)} />
-    <div className="w-px h-20 bg-white/20 mx-auto" />
-  </motion.div>
-);
+const REASONS = [
+  { icon: Heart, label: 'Kindness' },
+  { icon: HandHeart, label: 'Support' },
+  { icon: Sparkles, label: 'Love' },
+];
 
-const BirthdayCake = () => {
-  const [blown, setBlown] = useState(false);
-
-  return (
-    <motion.div
-      initial={{ scale: 0, y: 40 }}
-      whileInView={{ scale: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ type: 'spring', stiffness: 150, delay: 0.2 }}
-      className="flex flex-col items-center cursor-pointer select-none"
-      onClick={() => setBlown(true)}
-    >
-      <div className="flex gap-4 mb-1">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            animate={
-              blown
-                ? { opacity: 0, scale: 0, y: -10 }
-                : { y: [0, -3, 0], scale: [1, 1.15, 1] }
-            }
-            transition={
-              blown
-                ? { duration: 0.3, delay: i * 0.1 }
-                : { duration: 0.8, repeat: Infinity, delay: i * 0.2 }
-            }
-            className="text-2xl"
-          >
-            {'\u{1F525}'}
-          </motion.div>
-        ))}
-      </div>
-      <div className="text-7xl md:text-8xl">{'\u{1F382}'}</div>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className={cn(
-          'text-sm mt-4 transition-colors',
-          blown ? 'text-amber-300/60' : 'text-amber-400/40'
-        )}
-      >
-        {blown ? 'Wish made! \u2728' : 'Tap to blow out the candles!'}
-      </motion.p>
-      {blown && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2"
-        >
-          <Sparkles className="w-6 h-6 text-amber-400/50" />
-        </motion.div>
-      )}
-    </motion.div>
-  );
-};
-
-export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
+export const GratitudeTemplate = ({ message }: GratitudeTemplateProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -100,78 +35,71 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
   return (
     <div
       ref={containerRef}
-      className="relative bg-[#0a0806] text-white overflow-x-hidden"
+      className="relative bg-[#0a0804] text-white overflow-x-hidden"
     >
-      <ScrollProgress color="bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500" />
+      <ScrollProgress color="bg-gradient-to-r from-amber-400 via-yellow-400 to-emerald-400" />
 
       {/* Ambient gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] rounded-full blur-[120px] opacity-15 bg-gradient-to-br from-amber-500 via-orange-500 to-pink-600" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[100px] opacity-10 bg-gradient-to-tl from-purple-500 to-amber-400" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] rounded-full blur-[120px] opacity-15 bg-gradient-to-br from-amber-500 via-yellow-500 to-emerald-600" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-[100px] opacity-10 bg-gradient-to-tl from-emerald-400 to-amber-500" />
       </div>
 
       <div className="fixed inset-0 pointer-events-none z-[1]">
-        <ParticleBackground type="confetti" density={35} />
+        <ParticleBackground type="confetti" density={20} />
       </div>
 
       {/* SECTION 1: Hero */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative z-10 min-h-screen flex items-center justify-center p-6 overflow-hidden"
+        className="relative z-10 min-h-screen flex items-center justify-center p-6"
       >
-        <Balloon color="bg-pink-400/60" delay={0.5} x="10%" />
-        <Balloon color="bg-amber-400/60" delay={1} x="25%" />
-        <Balloon color="bg-purple-400/60" delay={0.8} x="75%" />
-        <Balloon color="bg-cyan-400/60" delay={1.3} x="88%" />
-
-        <div className="max-w-3xl w-full text-center relative z-10">
+        <div className="max-w-3xl w-full text-center">
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="text-7xl md:text-8xl mb-4 inline-block"
+            className="text-7xl md:text-8xl mb-8 inline-block"
           >
             <motion.span
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
-              {'\u{1F389}'}
+              {'\u{1F31F}'}
             </motion.span>
           </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-amber-300/70 text-xl md:text-2xl mb-2 font-light uppercase tracking-widest"
-          >
-            Happy Birthday
-          </motion.p>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.4 }}
             className={cn(
               'font-display text-6xl md:text-7xl lg:text-9xl font-bold mb-6',
               'bg-clip-text text-transparent',
-              'bg-gradient-to-r from-amber-300 via-orange-400 to-pink-400',
+              'bg-gradient-to-r from-amber-300 via-yellow-300 to-emerald-300',
               'leading-tight'
             )}
           >
-            {receiver}!
+            Thank You
           </motion.h1>
 
-          <motion.div
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="text-amber-200/60 text-xl md:text-2xl mb-4 font-light"
+          >
+            A message of gratitude for <span className="text-amber-300/90 font-medium">{receiver}</span>
+          </motion.p>
+
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="flex items-center justify-center gap-3 text-amber-400/40"
+            className="text-amber-400/40 text-lg"
           >
-            <Star className="w-4 h-4" />
-            <span className="text-lg">Wishing you the most wonderful day</span>
-            <Star className="w-4 h-4" />
-          </motion.div>
+            from {sender}
+          </motion.p>
 
           <motion.div
             initial={{ opacity: 0 }}
@@ -184,44 +112,64 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
               transition={{ duration: 1.5, repeat: Infinity }}
               className="flex flex-col items-center gap-2 text-amber-400/30"
             >
-              <span className="text-sm">Scroll to celebrate</span>
-              <PartyPopper className="w-5 h-5" />
+              <span className="text-sm">Scroll to continue</span>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
             </motion.div>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* SECTION 2: Candle Blow + User Message */}
+      {/* SECTION 2: Reasons + Message */}
       <section className="relative z-10 min-h-screen flex items-center justify-center py-24 px-6">
-        <div className="max-w-3xl mx-auto w-full text-center">
+        <div className="max-w-3xl mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12"
+            className="text-center mb-12"
           >
             <h2
               className={cn(
                 'text-4xl md:text-5xl font-bold',
                 'bg-clip-text text-transparent',
-                'bg-gradient-to-r from-amber-300 to-orange-400'
+                'bg-gradient-to-r from-amber-300 to-emerald-300'
               )}
             >
-              Make a Wish
+              For Everything You Are
             </h2>
           </motion.div>
 
-          <BirthdayCake />
+          {/* Reason icons */}
+          <div className="flex justify-center gap-8 mb-14">
+            {REASONS.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2, type: 'spring' }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="w-20 h-20 rounded-full bg-amber-900/30 border border-amber-500/20 flex items-center justify-center">
+                  <item.icon className="w-8 h-8 text-amber-400/70" />
+                </div>
+                <span className="text-amber-200/60 text-sm">{item.label}</span>
+              </motion.div>
+            ))}
+          </div>
 
+          {/* User's message */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.6 }}
-            className="relative rounded-3xl p-8 md:p-14 mt-16 bg-amber-950/20 border border-amber-500/10 backdrop-blur-sm overflow-hidden text-left"
+            className="relative rounded-3xl p-8 md:p-14 bg-amber-950/20 border border-amber-500/10 backdrop-blur-sm overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-24 h-24 opacity-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-br-full" />
-            <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 bg-gradient-to-tl from-pink-400 to-amber-500 rounded-tl-full" />
+            <div className="absolute top-0 left-0 w-24 h-24 opacity-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-br-full" />
+            <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 bg-gradient-to-tl from-emerald-400 to-amber-500 rounded-tl-full" />
 
             <p className="text-lg md:text-xl leading-relaxed text-amber-100/90 whitespace-pre-wrap relative z-10 font-light">
               Dear {receiver},
@@ -250,7 +198,7 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
                 viewport={{ once: true }}
                 className="h-px w-24 bg-gradient-to-r from-transparent to-amber-500/30"
               />
-              <Cake className="mx-3 w-5 h-5 text-amber-400/40" />
+              <Sparkles className="mx-3 w-5 h-5 text-amber-400/40" />
               <motion.div
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
@@ -259,8 +207,8 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
               />
             </div>
 
-            <p className="text-amber-300/50 text-lg">
-              With all the birthday love in the world,
+            <p className="text-amber-300/60 text-lg italic">
+              With heartfelt gratitude,
             </p>
 
             <motion.p
@@ -268,17 +216,17 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
               className={cn(
                 'font-display text-5xl md:text-6xl font-bold',
                 'bg-clip-text text-transparent',
-                'bg-gradient-to-r from-amber-300 via-orange-400 to-pink-400'
+                'bg-gradient-to-r from-amber-300 via-yellow-300 to-emerald-300'
               )}
             >
               {sender}
             </motion.p>
 
             <motion.div
-              animate={{ rotate: [0, 15, -15, 0] }}
+              animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <PartyPopper className="w-10 h-10 mx-auto text-amber-500/60" />
+              <HandHeart className="w-10 h-10 mx-auto text-amber-500/60" />
             </motion.div>
           </motion.div>
         </div>
@@ -302,7 +250,7 @@ export const BirthdayTemplate = ({ message }: BirthdayTemplateProps) => {
                 className={cn(
                   'text-sm font-medium',
                   'bg-clip-text text-transparent',
-                  'bg-gradient-to-r from-amber-400 to-orange-400',
+                  'bg-gradient-to-r from-amber-400 to-emerald-400',
                   'hover:opacity-80 transition-opacity'
                 )}
               >

@@ -1,6 +1,6 @@
 // Shared message type definitions
 
-export type TemplateType = 'love' | 'sorry' | 'birthday' | 'base';
+export type TemplateType = 'love' | 'sorry' | 'birthday' | 'gratitude' | 'congratulations' | 'encouragement' | 'miss-you' | 'friendship' | 'get-well';
 
 export interface MessageData {
   id: string;

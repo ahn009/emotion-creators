@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 
-type ParticleType = 'hearts' | 'rain' | 'confetti';
+type ParticleType = 'hearts' | 'rain' | 'confetti' | 'stars';
 
 interface ParticleBackgroundProps {
   type: ParticleType;
@@ -24,12 +24,14 @@ const COLORS = {
   hearts: ['#f43f5e', '#ec4899', '#db2777', '#be185d', '#e879a0'],
   rain: ['#94a3b8', '#64748b', '#78909c', '#90a4ae', '#b0bec5'],
   confetti: ['#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f43f5e'],
+  stars: ['#fbbf24', '#f9a8d4', '#c4b5fd', '#93c5fd', '#e2e8f0', '#fde68a'],
 };
 
 const CHARS = {
   hearts: ['\u2665', '\u2764', '\u2661'],
   rain: ['|'],
   confetti: ['\u25CF', '\u25A0', '\u2605', '\u25B2'],
+  stars: ['\u2605', '\u2736', '\u2734', '\u2727'],
 };
 
 export const ParticleBackground = ({ type, density = 40 }: ParticleBackgroundProps) => {
@@ -98,6 +100,21 @@ export const ParticleBackground = ({ type, density = 40 }: ParticleBackgroundPro
         };
       }
 
+      if (type === 'stars') {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          size: Math.random() * 10 + 6,
+          speedX: Math.random() * 0.3 - 0.15,
+          speedY: Math.random() * 0.3 - 0.15,
+          opacity: Math.random() * 0.3 + 0.05,
+          rotation: Math.random() * 360,
+          rotationSpeed: Math.random() * 0.5 - 0.25,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          char: chars[Math.floor(Math.random() * chars.length)],
+        };
+      }
+
       // confetti
       return {
         x: Math.random() * w,
@@ -132,6 +149,10 @@ export const ParticleBackground = ({ type, density = 40 }: ParticleBackgroundPro
         } else if (type === 'hearts' && p.y < -50) {
           p.y = h + 50;
           p.x = Math.random() * w;
+        } else if (type === 'stars' && (p.x < -50 || p.x > w + 50 || p.y < -50 || p.y > h + 50)) {
+          p.x = Math.random() * w;
+          p.y = Math.random() * h;
+          p.opacity = Math.random() * 0.3 + 0.05;
         } else if (type === 'confetti' && p.y > h + 50) {
           p.y = -50;
           p.x = Math.random() * w;

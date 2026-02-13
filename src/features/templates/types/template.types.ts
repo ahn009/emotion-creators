@@ -1,6 +1,6 @@
 // Based on spec.md Section 6.3 - Template Types
 
-import { TemplateType } from './message';
+import { TemplateType } from '@/shared/types/message';
 
 export type ColorTheme = 'warm' | 'calm' | 'bright';
 
