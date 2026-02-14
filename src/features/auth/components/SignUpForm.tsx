@@ -70,6 +70,7 @@ export default function SignUpForm() {
       navigate(ROUTES.CREATE);
     } catch (error) {
       toast.error((error as Error).message);
+    } finally {
       setLoading(false);
     }
   };

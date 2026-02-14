@@ -17,7 +17,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Set persistence to local (survives page reloads)
-setPersistence(auth, browserLocalPersistence)
+// Exported so AuthProvider can await it before using auth
+const persistenceReady = setPersistence(auth, browserLocalPersistence)
   .catch((error) => {
     console.error('Auth persistence error:', error);
   });
@@ -31,4 +32,4 @@ if (typeof window !== 'undefined') {
   }
 }
 
-export { auth, analytics, app };
+export { auth, analytics, app, persistenceReady };

@@ -55,6 +55,7 @@ export default function SignInForm() {
       navigate(ROUTES.CREATE);
     } catch (error) {
       toast.error((error as Error).message);
+    } finally {
       setLoading(false);
     }
   };

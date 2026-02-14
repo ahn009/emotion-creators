@@ -15,7 +15,7 @@ import {
   confirmPasswordReset,
   AuthError,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, persistenceReady } from '@/lib/firebase';
 import type { ActionCodeSettings } from 'firebase/auth';
 
 const getVerificationSettings = (): ActionCodeSettings => ({
@@ -54,63 +54,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isRedirectPending, setIsRedirectPending] = useState(false);
 
-  // Handle redirect result FIRST before setting up auth listener
+  // Handle redirect result and set up auth listener
   useEffect(() => {
     let mounted = true;
+    let unsubscribe: (() => void) | undefined;
 
-    const handleRedirectResult = async () => {
-      try {
-        // Check if we're coming back from a redirect
-        const result = await getRedirectResult(auth);
-        
-        if (result?.user && mounted) {
-          console.log('Redirect sign-in successful:', result.user.email);
-          setUser(result.user);
-          setLoading(false);
-          // Clear any pending redirect flag
-          sessionStorage.removeItem('auth_redirect_pending');
-          return true;
-        }
-        return false;
-      } catch (error: any) {
-        console.error('Redirect result error:', error);
-        if (mounted) {
-          sessionStorage.removeItem('auth_redirect_pending');
-          setIsRedirectPending(false);
-        }
-        return false;
-      }
-    };
+    const init = async () => {
+      // Wait for persistence to be configured before any auth operations
+      await persistenceReady;
 
-    const setupAuthListener = () => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Always set up the auth state listener
+      unsubscribe = onAuthStateChanged(auth, (user) => {
         if (mounted) {
           console.log('Auth state changed:', user?.email || 'No user');
           setUser(user);
           setLoading(false);
+          setIsRedirectPending(false);
+          sessionStorage.removeItem('auth_redirect_pending');
         }
       }, (error) => {
         console.error('Auth state error:', error);
         if (mounted) setLoading(false);
       });
 
-      return unsubscribe;
-    };
+      // Check if we're coming back from a redirect
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user && mounted) {
+          console.log('Redirect sign-in successful:', result.user.email);
+          // onAuthStateChanged will handle setting the user
+        }
+      } catch (error: any) {
+        console.error('Redirect result error:', error);
+        if (mounted) {
+          sessionStorage.removeItem('auth_redirect_pending');
+          setIsRedirectPending(false);
+        }
+      }
 
-    // First check redirect result, then set up listener
-    handleRedirectResult().then((handled) => {
-      if (!handled && mounted) {
-        // Check if we were waiting for a redirect
+      // If we were waiting for a redirect but no result came back, clear the flag
+      if (mounted) {
         const pending = sessionStorage.getItem('auth_redirect_pending');
         if (pending) {
           setIsRedirectPending(true);
         }
-        setupAuthListener();
       }
-    });
+    };
+
+    init();
 
     return () => {
       mounted = false;
+      unsubscribe?.();
     };
   }, []);
 
@@ -151,15 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = useCallback(async (forceRedirect = false) => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({
-      prompt: 'select_account',
-      // Add custom parameters to help with popup blocking
-      access_type: 'online',
-    });
-
-    // Add scopes if needed
-    provider.addScope('email');
-    provider.addScope('profile');
+    provider.setCustomParameters({ prompt: 'select_account' });
 
     const useRedirectMethod = forceRedirect || shouldUseRedirect();
 
@@ -167,26 +154,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Attempting Google sign-in...', useRedirectMethod ? 'using redirect' : 'using popup');
 
       if (useRedirectMethod) {
-        // Mark that we're initiating a redirect
         sessionStorage.setItem('auth_redirect_pending', 'true');
         setIsRedirectPending(true);
-        
         await signInWithRedirect(auth, provider, browserPopupRedirectResolver);
-        // Note: This will reload the page, code below won't execute immediately
       } else {
-        // Desktop/Chrome: Try popup first with better error handling
         try {
-          const result = await signInWithPopup(auth, provider);
+          const result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
           console.log('Google sign-in successful:', result.user.email);
         } catch (popupError: any) {
-          console.warn('Popup failed:', popupError.code);
-          
+          console.warn('Popup failed:', popupError.code, popupError.message);
+
           // If popup blocked or closed, fallback to redirect
-          if (popupError.code === 'auth/popup-blocked' || 
+          if (popupError.code === 'auth/popup-blocked' ||
               popupError.code === 'auth/popup-closed-by-user' ||
-              popupError.code === 'auth/cancelled-popup-request' ||
-              popupError.code === 'auth/network-request-failed') {
-            
+              popupError.code === 'auth/cancelled-popup-request') {
             console.log('Falling back to redirect...');
             sessionStorage.setItem('auth_redirect_pending', 'true');
             setIsRedirectPending(true);
@@ -197,17 +178,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch (error: any) {
-      console.error('Google sign in error:', error);
+      console.error('Google sign in error:', error.code, error.message, error);
       sessionStorage.removeItem('auth_redirect_pending');
       setIsRedirectPending(false);
-      
+
       const errorMessages: Record<string, string> = {
         'auth/popup-closed-by-user': 'Sign-in cancelled',
-        'auth/popup-blocked': 'Popup was blocked. Please try again or use a different browser.',
-        'auth/network-request-failed': 'Network error. Please check your connection',
+        'auth/popup-blocked': 'Popup was blocked. Please allow popups for this site and try again.',
+        'auth/network-request-failed': 'Google sign-in failed. This is usually caused by ad blockers or browser privacy extensions — try disabling them and retry.',
+        'auth/internal-error': 'Google sign-in failed. Try disabling ad blockers or browser privacy extensions and retry.',
+        'auth/unauthorized-domain': 'This domain is not authorized for Google sign-in. Add it in Firebase Console > Authentication > Settings > Authorized domains.',
         'auth/account-exists-with-different-credential': 'An account already exists with this email using a different sign-in method',
+        'auth/operation-not-allowed': 'Google sign-in is not enabled. Enable it in Firebase Console > Authentication > Sign-in method.',
       };
-      
+
       throw new Error(errorMessages[error.code] || error.message || 'Failed to sign in with Google');
     }
   }, []);
