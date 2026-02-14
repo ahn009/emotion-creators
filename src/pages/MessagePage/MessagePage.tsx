@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TemplatePreview } from '@/features/templates/components/TemplatePreview';
 import { useMessageStore } from '@/features/messages/stores/messageStore';
+import { SEO } from '@/components/common';
 import { ROUTES } from '@/shared/config';
 
 const MessagePage = () => {
@@ -30,7 +31,16 @@ const MessagePage = () => {
     );
   }
 
-  return <TemplatePreview message={message} />;
+  return (
+    <>
+      <SEO
+        title="Shared Message - EmotionCreator"
+        description="View a heartfelt message created with EmotionCreator."
+        noIndex
+      />
+      <TemplatePreview message={message} />
+    </>
+  );
 };
 
 export default MessagePage;

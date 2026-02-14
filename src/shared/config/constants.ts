@@ -18,7 +18,7 @@ export const ROUTES = {
 } as const;
 
 export const APP_CONFIG = {
-  NAME: 'MessageApp',
-  DESCRIPTION: 'Create beautiful messages',
+  NAME: 'EmotionCreator',
+  DESCRIPTION: 'Create beautiful, shareable digital messages for love, apologies, birthdays & more. Free, private, no signup needed.',
   MAX_MESSAGE_LENGTH: 1000,
 } as const;

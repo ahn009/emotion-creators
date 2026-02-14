@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/shared/config/constants';
 import { TEMPLATES } from '@/features/templates/constants';
@@ -165,8 +165,29 @@ const TemplatesPage = () => {
     setTemplate(templateId as Parameters<typeof setTemplate>[0]);
   };
 
+  const templatesStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Emotion Message Templates',
+    description: 'Browse 9 beautiful emotion templates for creating heartfelt digital messages.',
+    numberOfItems: TEMPLATES.length,
+    itemListElement: TEMPLATES.map((template, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: template.name,
+      description: template.description,
+      url: 'https://emotion-creators.vercel.app/create',
+    })),
+  };
+
   return (
     <PageShell>
+      <SEO
+        title="Message Templates - EmotionCreator"
+        description="Browse 9 beautiful emotion templates: love, sorry, birthday, thank you, congratulations & more. Create your heartfelt message in minutes."
+        canonical="/templates"
+        structuredData={templatesStructuredData}
+      />
       <div className="py-24 md:py-32">
         <Container size="lg">
           {/* ── Hero Header ── */}

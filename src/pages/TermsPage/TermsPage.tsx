@@ -3,13 +3,18 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PageShell } from '@/components/layout';
-import { Container, Section } from '@/components/common';
+import { Container, Section, SEO } from '@/components/common';
 import { FileText, Shield, AlertCircle } from 'lucide-react';
 import { ROUTES } from '@/shared/config/constants';
 
 const TermsPage = () => {
   return (
     <PageShell>
+      <SEO
+        title="Terms of Service - EmotionCreator"
+        description="Read the EmotionCreator Terms of Service. Learn about your rights, acceptable use, content ownership, and service availability."
+        canonical="/terms"
+      />
       <Section className="py-24">
         <Container size="md">
           <motion.div

@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PageShell } from '@/components/layout';
-import { Container, Section } from '@/components/common';
+import { Container, Section, SEO } from '@/components/common';
 import { ShieldCheck, Database, Eye, UserCheck, AlertCircle } from 'lucide-react';
 import { ROUTES } from '@/shared/config/constants';
 
 const PrivacyPage = () => {
   return (
     <PageShell>
+      <SEO
+        title="Privacy Policy - EmotionCreator"
+        description="Learn how EmotionCreator collects, uses, and protects your personal information. Your privacy matters to us."
+        canonical="/privacy"
+      />
       <Section className="py-24">
         <Container size="md">
           <motion.div

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
 import { Hero } from '@/components/hero';
-import { Container, Section } from '@/components/common';
+import { Container, Section, SEO } from '@/components/common';
 import { Reveal } from '@/components/motion';
 import { TestimonialsSection, StatsSection, FAQSection, CTASection } from '@/components/sections';
 import { TEMPLATES } from '@/features/templates/constants';
@@ -33,8 +33,95 @@ const features = [
 ];
 
 const HomePage = () => {
+  const homepageStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'EmotionCreator',
+      url: 'https://emotion-creators.vercel.app',
+      description: 'Create beautiful, shareable digital messages for love, apologies, birthdays & more. Free, private, no signup needed.',
+      applicationCategory: 'CommunicationApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Do I need an account to create a message?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No! You can create and share messages without signing up. However, if you close your browser without an account, your links will be lost. Sign up to keep your pages forever!',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How long do shared links last?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'For guests, links last as long as your browser session. With an account, your links are permanent and will never expire.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I customize the templates?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Currently, you can choose from our curated templates and add your personal message. Each template is designed to perfectly express specific emotions.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is my data private?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "Absolutely! We don't track page visits, we don't sell your data, and your messages are yours alone. Privacy is core to our values.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can recipients see who sent the message?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Only if you include your name in the "From" field. Otherwise, it can be completely anonymous. You control what information is shared.',
+          },
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      name: 'How to Create and Share an Emotional Message',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Choose Template',
+          text: 'Pick the perfect emotion template that matches your feelings.',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Write Message',
+          text: 'Pour your heart into words that truly matter.',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Share Link',
+          text: 'Send a beautiful page with one unique shareable link.',
+        },
+      ],
+    },
+  ];
+
   return (
     <PageShell>
+      <SEO
+        title="EmotionCreator - Free Private Digital Message Templates for Every Feeling"
+        description="Create beautiful, shareable digital messages for love, apologies, birthdays & more. Free, private, no signup needed. One emotion, one page, one link."
+        canonical="/"
+        structuredData={homepageStructuredData}
+      />
       <div>
         <Hero />
         

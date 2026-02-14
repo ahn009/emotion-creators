@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PageShell } from '@/components/layout';
-import { Container, Section } from '@/components/common';
+import { Container, Section, SEO } from '@/components/common';
 import { Cookie, AlertCircle } from 'lucide-react';
 import { ROUTES } from '@/shared/config/constants';
 
 const CookiePolicyPage = () => {
   return (
     <PageShell>
+      <SEO
+        title="Cookie Policy - EmotionCreator"
+        description="Learn about the cookies and local storage EmotionCreator uses. Manage your cookie preferences and understand our data practices."
+        canonical="/cookies"
+      />
       <Section className="py-24">
         <Container size="md">
           <motion.div

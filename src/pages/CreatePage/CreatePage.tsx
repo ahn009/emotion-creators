@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { TemplateGrid } from '@/features/templates/components/TemplateGrid';
 import { MessageForm } from '@/components/forms';
 import { FadeIn } from '@/components/motion';
@@ -45,6 +45,11 @@ const CreatePage = () => {
 
   return (
     <PageShell showGuestWarning>
+      <SEO
+        title="Create Your Message - EmotionCreator"
+        description="Choose a template and write your heartfelt message. Share it with a unique link — free, private, no account required."
+        canonical="/create"
+      />
       <div className="min-h-screen">
         {/* Hero section for Create */}
         <section className="relative py-24 md:py-32 overflow-hidden">

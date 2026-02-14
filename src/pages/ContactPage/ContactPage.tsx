@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PageShell } from '@/components/layout';
-import { Container, Section } from '@/components/common';
+import { Container, Section, SEO } from '@/components/common';
 import { Mail, MessageCircle, Shield, Clock, AlertCircle } from 'lucide-react';
 import { ROUTES } from '@/shared/config/constants';
 
 const ContactPage = () => {
   return (
     <PageShell>
+      <SEO
+        title="Contact & Support - EmotionCreator"
+        description="Get in touch with the EmotionCreator team. We're here to help with questions, feedback, or support."
+        canonical="/contact"
+      />
       <Section className="py-24">
         <Container size="md">
           <motion.div
