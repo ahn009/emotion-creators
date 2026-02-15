@@ -37,14 +37,38 @@ export default function SignInForm() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
+      // signInWithGoogle will use redirect on mobile devices
+      // After redirect, the user will be returned to the app and auth state will be updated
       await signInWithGoogle();
-      toast.success('Welcome!');
-      navigate(ROUTES.CREATE);
-    } catch (error) {
-      toast.error((error as Error).message);
+      
+      // Note: On mobile (redirect method), the code above triggers a redirect to Google
+      // and the user returns to the app. The navigation happens automatically via
+      // onAuthStateChanged listener in useAuth, so we don't navigate here.
+      // For popup method, user is already signed in at this point.
+      
+      if (!shouldUseRedirect()) {
+        toast.success('Welcome!');
+        navigate(ROUTES.CREATE);
+      }
+    } catch (error: any) {
+      const errorMessage = (error as Error).message;
+      if (!errorMessage?.includes('redirect')) {
+        toast.error(errorMessage);
+      }
     } finally {
-      setLoading(false);
+      if (!shouldUseRedirect()) {
+        setLoading(false);
+      }
     }
+  };
+
+  // Helper to detect if we should use redirect method (same logic as useAuth)
+  const shouldUseRedirect = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const isInAppBrowser = /instagram|fbav|fb_iab|twitter|line|wechat|tiktok/i.test(userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+    return isMobile || isInAppBrowser || isSafari;
   };
 
   const inputClasses = "w-full px-4 py-3 pl-12 bg-glass-bg border border-glass-border rounded-xl text-foreground placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all";

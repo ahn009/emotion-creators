@@ -65,14 +65,45 @@ export default function SignUpForm() {
 
     setLoading(true);
     try {
+      // signInWithGoogle will use redirect on mobile devices
+      // After redirect, the user will be returned to the app and auth state will be updated
       await signInWithGoogle();
-      toast.success('Welcome to EmotionCreator!');
-      navigate(ROUTES.CREATE);
-    } catch (error) {
-      toast.error((error as Error).message);
+      
+      // Note: On mobile (redirect method), the code above triggers a redirect to Google
+      // and the user returns to the app. The navigation happens automatically via
+      // onAuthStateChanged listener in useAuth, so we don't navigate here.
+      // We only show success message and navigate for popup method.
+      
+      // For popup method, user is already signed in at this point
+      // For redirect method, the page will reload and auth state will be restored
+      if (!shouldUseRedirect()) {
+        toast.success('Welcome to EmotionCreator!');
+        navigate(ROUTES.CREATE);
+      }
+      // For redirect method, the user will be redirected back to the app
+      // and the AuthProvider's onAuthStateChanged will handle the user state
+    } catch (error: any) {
+      // Only show error if it's not the expected redirect case
+      const errorMessage = (error as Error).message;
+      if (!errorMessage?.includes('redirect')) {
+        toast.error(errorMessage);
+      }
     } finally {
-      setLoading(false);
+      // Only set loading to false if we're not using redirect
+      // (with redirect, the page will reload anyway)
+      if (!shouldUseRedirect()) {
+        setLoading(false);
+      }
     }
+  };
+
+  // Helper to detect if we should use redirect method (same logic as useAuth)
+  const shouldUseRedirect = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const isInAppBrowser = /instagram|fbav|fb_iab|twitter|line|wechat|tiktok/i.test(userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+    return isMobile || isInAppBrowser || isSafari;
   };
 
   const inputClasses = "w-full px-4 py-3 pl-12 bg-glass-bg border border-glass-border rounded-xl text-foreground placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all";

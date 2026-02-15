@@ -1,7 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense, lazy, ReactNode } from 'react';
 import { ProtectedRoute } from './route-guards';
 import { PageFallback } from '@/components/common/PageFallback';
+import { useAuth } from '@/features/auth';
+
+// Redirects authenticated users away from auth pages
+function AuthGuard({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <PageFallback />;
+  }
+  
+  // If user is already authenticated, redirect to create page
+  if (user) {
+    return <Navigate to="/create" replace />;
+  }
+  
+  return <>{children}</>;
+}
 
 // Route-based code splitting - each page loads on demand
 const HomePage = lazy(() => import('@/pages/HomePage/HomePage'));
@@ -33,8 +50,8 @@ export function AppRoutes() {
     <Suspense fallback={<PageFallback />}>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={<AuthGuard><SignInPage /></AuthGuard>} />
+        <Route path="/signup" element={<AuthGuard><SignUpPage /></AuthGuard>} />
         <Route path="/create" element={<CreatePage />} />
         <Route path="/preview" element={<PreviewPage />} />
         <Route path="/message/:id" element={<MessagePage />} />
