@@ -3,7 +3,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/shared/config';
 import { Home, Heart } from 'lucide-react';
@@ -11,6 +11,11 @@ import { Home, Heart } from 'lucide-react';
 const NotFoundPage = () => {
   return (
     <PageShell>
+      <SEO
+        title="Page Not Found - EmotionCreator"
+        description="This page doesn't exist or may have been removed."
+        noIndex
+      />
       <div className="min-h-screen flex items-center justify-center py-20">
         <Container size="sm">
           <motion.div

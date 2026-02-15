@@ -160,9 +160,9 @@ const CreatePage = () => {
                       <PenTool className="w-4 h-4 text-primary" />
                       <span className="text-sm text-text-secondary">Step 2 of 2</span>
                     </motion.div>
-                    <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                    <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
                       Write Your <span className="gradient-text">Message</span>
-                    </h1>
+                    </h2>
                     <p className="text-text-secondary text-lg md:text-xl max-w-xl mx-auto">
                       Express what's in your heart with the{' '}
                       <span className="text-primary font-medium">{selectedTemplate?.name}</span> template
@@ -185,9 +185,9 @@ const CreatePage = () => {
           <Container size="md">
             <FadeIn>
               <div className="text-center mb-10">
-                <h3 className="font-display text-2xl font-semibold mb-2">
+                <h2 className="font-display text-2xl font-semibold mb-2">
                   💡 Tips for a Heartfelt Message
-                </h3>
+                </h2>
                 <p className="text-text-muted">
                   Make your message stand out
                 </p>

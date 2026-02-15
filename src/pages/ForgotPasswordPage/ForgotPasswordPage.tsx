@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/shared/config/constants';
 import { Mail, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
@@ -119,6 +119,11 @@ const ForgotPasswordPage = () => {
 
   return (
     <PageShell>
+      <SEO
+        title="Reset Password - EmotionCreator"
+        description="Reset your EmotionCreator account password."
+        noIndex
+      />
       <div className="min-h-screen flex items-center justify-center py-24">
         <Container size="sm">
           <motion.div

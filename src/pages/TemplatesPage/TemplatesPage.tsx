@@ -344,9 +344,9 @@ const TemplatesPage = () => {
               transition={{ delay: 0.5 }}
               className="glass-card rounded-2xl p-8 md:p-10"
             >
-              <h3 className="font-display text-2xl font-semibold mb-6">
+              <h2 className="font-display text-2xl font-semibold mb-6">
                 How Templates Work
-              </h3>
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
@@ -403,9 +403,9 @@ const TemplatesPage = () => {
               transition={{ delay: 0.6 }}
               className="glass-card rounded-2xl p-8 md:p-10"
             >
-              <h3 className="font-display text-2xl font-semibold mb-4">
+              <h2 className="font-display text-2xl font-semibold mb-4">
                 Why Design Matters for Emotions
-              </h3>
+              </h2>
               <div className="space-y-4 text-text-secondary leading-relaxed">
                 <p>
                   We read emotions before we read words. When someone opens your
@@ -440,9 +440,9 @@ const TemplatesPage = () => {
               transition={{ delay: 0.7 }}
               className="glass-card rounded-2xl p-8 md:p-10"
             >
-              <h3 className="font-display text-2xl font-semibold mb-6">
+              <h2 className="font-display text-2xl font-semibold mb-6">
                 Frequently Asked Questions
-              </h3>
+              </h2>
               <div className="space-y-6">
                 <div>
                   <h4 className="font-medium text-foreground mb-2">
@@ -496,9 +496,9 @@ const TemplatesPage = () => {
               transition={{ delay: 0.8 }}
               className="text-center py-12"
             >
-              <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">
+              <h2 className="font-display text-2xl md:text-3xl font-bold mb-4">
                 Ready to express yourself?
-              </h3>
+              </h2>
               <p className="text-text-secondary mb-8 max-w-lg mx-auto">
                 Pick the emotion that matches your heart, write what you feel,
                 and send something beautiful to someone who deserves it.

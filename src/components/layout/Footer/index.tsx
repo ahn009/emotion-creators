@@ -9,7 +9,8 @@ import { Heart, Github, Twitter, Linkedin, Mail, ArrowUpRight, ArrowUp } from 'l
 const footerLinks = {
   product: [
     { label: 'Create Message', href: ROUTES.CREATE },
-    { label: 'Templates', href: ROUTES.CREATE },
+    { label: 'Templates', href: ROUTES.TEMPLATES },
+    { label: 'Blog', href: '/blog' },
     { label: 'How It Works', href: '/#how-it-works' },
   ],
   company: [

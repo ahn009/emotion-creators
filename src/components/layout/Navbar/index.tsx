@@ -113,7 +113,7 @@ export const Navbar = () => {
       }`}
     >
       <Container>
-        <nav className="flex items-center justify-between py-4">
+        <nav aria-label="Main navigation" className="flex items-center justify-between py-4">
           {/* LEFT - Logo (single instance, never duplicated) */}
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -289,6 +289,8 @@ export const Navbar = () => {
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-glass-bg transition-colors"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X className="w-6 h-6" />

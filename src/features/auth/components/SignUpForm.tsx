@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/features/auth';
@@ -130,6 +130,11 @@ export default function SignUpForm() {
 
   return (
     <PageShell>
+      <SEO
+        title="Sign Up - Create Your EmotionCreator Account"
+        description="Create a free EmotionCreator account to save your emotion pages forever. No credit card required."
+        noIndex
+      />
       <div className="min-h-screen flex items-center justify-center py-24">
         <Container size="sm">
           <motion.div

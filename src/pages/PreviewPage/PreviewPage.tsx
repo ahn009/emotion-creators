@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMessageStore, useMessageStoreHydrated } from '@/features/messages/stores/messageStore';
 import { TemplatePreview } from '@/features/templates/components/TemplatePreview';
 import { MessageData } from '@/features/messages/types/message.types';
+import { SEO } from '@/components/common';
 import { ROUTES } from '@/shared/config';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -89,6 +90,11 @@ const PreviewPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <SEO
+        title="Preview Your Message - EmotionCreator"
+        description="Preview your heartfelt message before sharing."
+        noIndex
+      />
       {!generatedSlug ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}

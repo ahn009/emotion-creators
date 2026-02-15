@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
-import { Container } from '@/components/common';
+import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { ROUTES } from '@/shared/config/constants';
@@ -51,6 +51,11 @@ export default function SignInForm() {
 
   return (
     <PageShell>
+      <SEO
+        title="Sign In - EmotionCreator"
+        description="Sign in to EmotionCreator to access and manage your saved emotion pages."
+        noIndex
+      />
       <div className="min-h-screen flex items-center justify-center py-24">
         <Container size="sm">
           <motion.div
