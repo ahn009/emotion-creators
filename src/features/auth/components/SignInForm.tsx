@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { PageShell } from '@/components/layout';
 import { Container } from '@/components/common';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/features/auth';
 import { ROUTES } from '@/shared/config/constants';
 import { Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react';
@@ -18,17 +17,10 @@ export default function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!acceptedTerms) {
-      toast.error('Please accept the Terms of Service and Privacy Policy');
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -43,11 +35,6 @@ export default function SignInForm() {
   };
 
   const handleGoogleSignIn = async () => {
-    if (!acceptedTerms) {
-      toast.error('Please accept the Terms of Service and Privacy Policy');
-      return;
-    }
-
     setLoading(true);
     try {
       await signInWithGoogle();
@@ -154,38 +141,26 @@ export default function SignInForm() {
                 </Link>
               </div>
 
-              {/* Terms and Privacy Checkbox */}
-              <div className="flex items-start gap-3 pt-2">
-                <Checkbox
-                  id="terms"
-                  checked={acceptedTerms}
-                  onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
-                  className="mt-1"
-                />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-text-secondary leading-relaxed cursor-pointer"
-                >
-                  I agree to the{' '}
-                  <Link to="/terms" className="text-primary hover:underline" target="_blank">
-                    Terms of Service
-                  </Link>
-                  {' '}and{' '}
-                  <Link to="/privacy" className="text-primary hover:underline" target="_blank">
-                    Privacy Policy
-                  </Link>
-                </label>
-              </div>
-
               <Button
                 type="submit"
                 variant="gradient"
                 className="w-full"
-                disabled={loading || !acceptedTerms}
+                disabled={loading}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
+
+            <p className="text-center text-xs text-text-muted mt-4">
+              By signing in, you agree to our{' '}
+              <Link to="/terms" className="text-primary hover:underline" target="_blank">
+                Terms of Service
+              </Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                Privacy Policy
+              </Link>
+            </p>
 
             <p className="text-center text-text-secondary mt-6">
               Don't have an account?{' '}

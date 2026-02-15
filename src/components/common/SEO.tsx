@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 const SITE_URL = 'https://emotion-creators.vercel.app';
 const SITE_NAME = 'EmotionCreator';
-const DEFAULT_OG_IMAGE = `${SITE_URL}/favicon.png`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface SEOProps {
   title: string;
@@ -47,7 +47,7 @@ export const SEO = ({
       {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
 
       {/* Twitter Card */}
-      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />

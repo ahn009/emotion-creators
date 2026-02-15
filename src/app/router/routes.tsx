@@ -22,6 +22,12 @@ const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage/ForgotP
 const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmailPage/VerifyEmailPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage/NotFoundPage'));
 
+// Blog pages
+const BlogIndexPage = lazy(() => import('@/pages/BlogPages/BlogIndexPage'));
+const LoveMessagesForHer = lazy(() => import('@/pages/BlogPages/LoveMessagesForHer'));
+const SorryMessages = lazy(() => import('@/pages/BlogPages/SorryMessages'));
+const GoodMorningMessages = lazy(() => import('@/pages/BlogPages/GoodMorningMessages'));
+
 export function AppRoutes() {
   return (
     <Suspense fallback={<PageFallback />}>
@@ -37,6 +43,11 @@ export function AppRoutes() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/cookies" element={<CookiePolicyPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        {/* Blog pages */}
+        <Route path="/blog" element={<BlogIndexPage />} />
+        <Route path="/blog/love-messages-for-her" element={<LoveMessagesForHer />} />
+        <Route path="/blog/sorry-messages" element={<SorryMessages />} />
+        <Route path="/blog/good-morning-messages" element={<GoodMorningMessages />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         {/* Protected routes — require authentication */}
