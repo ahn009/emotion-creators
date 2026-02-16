@@ -12,6 +12,24 @@ const ContactPage = () => {
         title="Contact & Support - EmotionCreator"
         description="Get in touch with the EmotionCreator team. We're here to help with questions, feedback, or support."
         canonical="/contact"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://emotion-creators.vercel.app',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Contact',
+              item: 'https://emotion-creators.vercel.app/contact',
+            },
+          ],
+        }}
       />
       <Section className="py-24">
         <Container size="md">

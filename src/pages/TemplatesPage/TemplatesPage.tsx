@@ -165,20 +165,100 @@ const TemplatesPage = () => {
     setTemplate(templateId as Parameters<typeof setTemplate>[0]);
   };
 
-  const templatesStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Emotion Message Templates',
-    description: 'Browse 9 beautiful emotion templates for creating heartfelt digital messages.',
-    numberOfItems: TEMPLATES.length,
-    itemListElement: TEMPLATES.map((template, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: template.name,
-      description: template.description,
-      url: 'https://emotion-creators.vercel.app/create',
-    })),
-  };
+  const templatesStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Emotion Message Templates',
+      description: 'Browse 9 beautiful emotion templates for creating heartfelt digital messages.',
+      numberOfItems: TEMPLATES.length,
+      itemListElement: TEMPLATES.map((template, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: template.name,
+        description: TEMPLATE_DETAILS[template.id]?.longDescription || template.description,
+        url: 'https://emotion-creators.vercel.app/create',
+      })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Are the templates free to use?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, all 9 emotion templates are completely free. You can create as many messages as you want using any template, anytime. No hidden limits, no premium tiers for basic usage.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can the recipient see which template I used?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "The recipient sees the beautifully designed message page with the template's styling — but the focus is entirely on your message and the emotion. The template name isn't prominently displayed to them; the experience feels personal and custom.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I change the template after creating a message?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "Currently, the template is set when you create the message. If you want a different look, you can create a new message with a different template — it only takes a minute. We're working on template-switching for future updates.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does the recipient need an account?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Your recipient simply opens the unique link and sees your message instantly. No downloads, no sign-ups, no friction. It works on any device with a web browser.',
+          },
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      name: 'How EmotionCreator Templates Work',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Pick your emotion',
+          text: 'Browse the templates and choose the one that matches what you are feeling. Each template has been designed with specific colors, tones, and visual elements that amplify that particular emotion.',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Write your message',
+          text: "Our guided form helps you structure your message — who it's from, who it's for, and what you want to say. No character limit. The template will present it beautifully regardless of length.",
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Share the link',
+          text: 'Your message gets a unique URL that you can share anywhere — text, email, social media. When your recipient opens it, they see a full-page, beautifully designed experience. No app downloads, no sign-ups needed.',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://emotion-creators.vercel.app',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Templates',
+          item: 'https://emotion-creators.vercel.app/templates',
+        },
+      ],
+    },
+  ];
 
   return (
     <PageShell>

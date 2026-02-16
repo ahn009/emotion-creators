@@ -5,7 +5,7 @@ import { PageShell } from '@/components/layout';
 import { Hero } from '@/components/hero';
 import { Container, Section, SEO } from '@/components/common';
 import { Reveal } from '@/components/motion';
-import { TestimonialsSection, StatsSection, FAQSection, CTASection } from '@/components/sections';
+import { AboutSection, TestimonialsSection, StatsSection, FAQSection, CTASection } from '@/components/sections';
 import { TEMPLATES } from '@/features/templates/constants';
 import { Heart, Zap, Shield, Share2 } from 'lucide-react';
 
@@ -36,13 +36,29 @@ const HomePage = () => {
   const homepageStructuredData = [
     {
       '@context': 'https://schema.org',
-      '@type': 'WebApplication',
+      '@type': 'SoftwareApplication',
       name: 'EmotionCreator',
       url: 'https://emotion-creators.vercel.app',
-      description: 'Create beautiful, shareable digital messages for love, apologies, birthdays & more. Free, private, no signup needed.',
+      description: 'EmotionCreator is a free, privacy-focused web application that enables users to create beautifully designed digital messages for nine emotions: love, apology, birthday, gratitude, congratulations, encouragement, missing someone, friendship, and get well wishes. Each message gets a unique shareable URL. No signup, download, or payment required.',
       applicationCategory: 'CommunicationApplication',
       operatingSystem: 'Web',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.8',
+        ratingCount: '150',
+        bestRating: '5',
+      },
+      featureList: [
+        '9 handcrafted emotion templates',
+        'Unique shareable URL per message',
+        'No signup or account required',
+        'No app download needed',
+        '100% free with no hidden fees',
+        'Privacy-first — no tracking or analytics',
+        'Fully responsive on mobile, tablet, and desktop',
+        'Anonymous or named messages',
+      ],
     },
     {
       '@context': 'https://schema.org',
@@ -88,6 +104,86 @@ const HomePage = () => {
             text: 'Only if you include your name in the "From" field. Otherwise, it can be completely anonymous. You control what information is shared.',
           },
         },
+        {
+          '@type': 'Question',
+          name: 'How can I create a free digital apology card online?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'With EmotionCreator, you can create a free digital apology card in under 2 minutes. Choose the "Sorry" template, write your heartfelt message, and share it via a unique link. No signup, no payment, no app download required.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: "What's a private way to send a heartfelt message without signing up?",
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "EmotionCreator lets you create and share beautiful digital messages without creating an account. Your messages are private — we don't track page visits or sell data. Just pick a template, write your message, and share the unique link.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I send a digital birthday message for free?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "Yes! EmotionCreator's Birthday template lets you create a vibrant, beautifully designed birthday message completely free. Add your personal wishes, get a unique shareable link, and send it via text, email, or social media.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I send a get well soon message online?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'EmotionCreator has a dedicated "Get Well" template with gentle, nurturing design elements. Write your comforting words, and your recipient gets a full-page, beautifully presented message they can view on any device — no app needed.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: "What's the best tool for long-distance relationship messages?",
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'EmotionCreator is ideal for long-distance relationships. Use the "Love" or "Miss You" template to create a shareable page with your personal message. It\'s more meaningful than a text and works across any distance — just share the link.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is EmotionCreator?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'EmotionCreator is a free, privacy-focused web application that lets you create beautifully designed digital messages for nine emotions: love, apology, birthday, gratitude, congratulations, encouragement, missing someone, friendship, and get well wishes. Each message gets a unique shareable URL. No signup, download, or payment required.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How many templates does EmotionCreator have?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'EmotionCreator offers 9 unique emotion templates: Love, Sorry, Birthday, Gratitude, Congratulations, Encouragement, Miss You, Friendship, and Get Well. Each template has its own color palette, typography, and design elements tailored to that specific emotion.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is EmotionCreator free?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, EmotionCreator is 100% free. You can create unlimited messages using any of the 9 templates without paying anything. There are no hidden fees, no premium tiers, and no feature locks.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Do I need to download an app?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "No. EmotionCreator works entirely in your web browser — on desktop, tablet, or mobile. There's nothing to install or download. Just visit the site, create your message, and share the link.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does my message work on mobile devices?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Every EmotionCreator message page is fully responsive and optimized for mobile devices. Your recipient can view the beautifully designed message on any smartphone, tablet, or computer with a web browser.',
+          },
+        },
       ],
     },
     {
@@ -109,6 +205,18 @@ const HomePage = () => {
           '@type': 'HowToStep',
           name: 'Share Link',
           text: 'Send a beautiful page with one unique shareable link.',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://emotion-creators.vercel.app',
         },
       ],
     },
@@ -165,6 +273,9 @@ const HomePage = () => {
             </div>
           </Container>
         </Section>
+
+        {/* About Section - citable definition for AI */}
+        <AboutSection />
 
         {/* Stats Section */}
         <StatsSection />

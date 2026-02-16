@@ -1,3 +1,4 @@
+export { AboutSection } from './AboutSection';
 export { CTASection } from './CTASection';
 export { FAQSection } from './FAQSection';
 export { StatsSection } from './StatsSection';

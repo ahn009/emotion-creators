@@ -12,6 +12,24 @@ const CookiePolicyPage = () => {
         title="Cookie Policy - EmotionCreator"
         description="Learn about the cookies and local storage EmotionCreator uses. Manage your cookie preferences and understand our data practices."
         canonical="/cookies"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://emotion-creators.vercel.app',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Cookie Policy',
+              item: 'https://emotion-creators.vercel.app/cookies',
+            },
+          ],
+        }}
       />
       <Section className="py-24">
         <Container size="md">

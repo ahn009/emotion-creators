@@ -58,11 +58,6 @@ export default function SignUpForm() {
   };
 
   const handleGoogleSignUp = async () => {
-    if (!acceptedTerms) {
-      toast.error('Please accept the Terms of Service and Privacy Policy');
-      return;
-    }
-
     setLoading(true);
     try {
       // signInWithGoogle will use redirect on mobile devices
@@ -218,6 +213,17 @@ export default function SignUpForm() {
               </svg>
               Continue with Google
             </Button>
+
+            <p className="text-center text-xs text-text-muted mb-6">
+              By continuing with Google, you agree to our{' '}
+              <Link to="/terms" className="text-primary hover:underline" target="_blank">
+                Terms of Service
+              </Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                Privacy Policy
+              </Link>
+            </p>
 
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">

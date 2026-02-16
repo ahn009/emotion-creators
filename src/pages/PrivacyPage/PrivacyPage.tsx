@@ -12,6 +12,24 @@ const PrivacyPage = () => {
         title="Privacy Policy - EmotionCreator"
         description="Learn how EmotionCreator collects, uses, and protects your personal information. Your privacy matters to us."
         canonical="/privacy"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://emotion-creators.vercel.app',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Privacy Policy',
+              item: 'https://emotion-creators.vercel.app/privacy',
+            },
+          ],
+        }}
       />
       <Section className="py-24">
         <Container size="md">

@@ -49,6 +49,24 @@ const CreatePage = () => {
         title="Create Your Message - EmotionCreator"
         description="Choose a template and write your heartfelt message. Share it with a unique link — free, private, no account required."
         canonical="/create"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://emotion-creators.vercel.app',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Create Message',
+              item: 'https://emotion-creators.vercel.app/create',
+            },
+          ],
+        }}
       />
       <div className="min-h-screen">
         {/* Hero section for Create */}

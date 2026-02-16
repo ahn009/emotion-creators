@@ -14,6 +14,24 @@ const TermsPage = () => {
         title="Terms of Service - EmotionCreator"
         description="Read the EmotionCreator Terms of Service. Learn about your rights, acceptable use, content ownership, and service availability."
         canonical="/terms"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://emotion-creators.vercel.app',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Terms of Service',
+              item: 'https://emotion-creators.vercel.app/terms',
+            },
+          ],
+        }}
       />
       <Section className="py-24">
         <Container size="md">
