@@ -38,7 +38,7 @@ const SorryMessages = () => {
   return (
     <PageShell>
       <SEO
-        title="How to Say Sorry – Sincere Apology Messages That Work | EmotionCreator"
+        title="Sincere Apology Messages That Work | EmotionCreator"
         description="Learn how to apologize sincerely with heartfelt sorry messages. Find the right words to mend relationships and express genuine remorse."
         canonical="/blog/sorry-messages"
         ogType="article"

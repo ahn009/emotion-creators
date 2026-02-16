@@ -38,7 +38,7 @@ const GoodMorningMessages = () => {
   return (
     <PageShell>
       <SEO
-        title="Sweet Good Morning Messages – Start Their Day with Love | EmotionCreator"
+        title="Good Morning Messages for Loved Ones | EmotionCreator"
         description="Find beautiful good morning messages for your loved ones. Sweet, romantic, and thoughtful texts to brighten their morning and show you care."
         canonical="/blog/good-morning-messages"
         ogType="article"

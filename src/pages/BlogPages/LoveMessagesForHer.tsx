@@ -38,7 +38,7 @@ const LoveMessagesForHer = () => {
   return (
     <PageShell>
       <SEO
-        title="Heartfelt Love Messages for Her – Make Her Feel Special | EmotionCreator"
+        title="Love Messages for Her | EmotionCreator"
         description="Discover beautiful love messages for your girlfriend or wife. Express your feelings with romantic, heartfelt words she will treasure forever."
         canonical="/blog/love-messages-for-her"
         ogType="article"
