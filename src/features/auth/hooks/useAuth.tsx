@@ -13,10 +13,11 @@ import {
   browserPopupRedirectResolver,
   sendPasswordResetEmail,
   confirmPasswordReset,
-  AuthError,
 } from 'firebase/auth';
-import { auth, persistenceReady } from '@/lib/firebase';
+import { auth, firebaseConfigError, persistenceReady, requireAuth, requireDb } from '@/lib/firebase';
+import { getAuthError } from '@/features/auth/utils/auth.utils';
 import type { ActionCodeSettings } from 'firebase/auth';
+import { doc, writeBatch } from 'firebase/firestore';
 
 const getVerificationSettings = (): ActionCodeSettings => ({
   url: `${window.location.origin}/verify-email`,
@@ -49,6 +50,31 @@ const shouldUseRedirect = () => {
   return isMobile || isInAppBrowser || isSafari;
 };
 
+const claimAnonymousMessages = async (userId: string) => {
+  const rawIds = localStorage.getItem('anonymous_message_ids');
+  if (!rawIds) return;
+
+  const parsedIds = (() => {
+    try {
+      return JSON.parse(rawIds) as unknown;
+    } catch {
+      return [];
+    }
+  })();
+  if (!Array.isArray(parsedIds)) return;
+
+  const messageIds = parsedIds.filter((value): value is string => typeof value === 'string');
+  if (!messageIds.length) return;
+
+  const db = requireDb();
+  const batch = writeBatch(db);
+  messageIds.forEach((messageId) => {
+    batch.update(doc(db, 'messages', messageId), { userId });
+  });
+  await batch.commit();
+  localStorage.removeItem('anonymous_message_ids');
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,11 +89,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Wait for persistence to be configured before any auth operations
       await persistenceReady;
 
+      if (!auth) {
+        if (firebaseConfigError) {
+          console.warn(firebaseConfigError);
+        }
+        if (mounted) setLoading(false);
+        return;
+      }
+
       // Always set up the auth state listener
       unsubscribe = onAuthStateChanged(auth, (user) => {
         if (mounted) {
           console.log('Auth state changed:', user?.email || 'No user');
           setUser(user);
+          if (user) {
+            claimAnonymousMessages(user.uid).catch((error) => {
+              console.warn('Could not claim anonymous messages:', error);
+            });
+          }
           setLoading(false);
           setIsRedirectPending(false);
           sessionStorage.removeItem('auth_redirect_pending');
@@ -84,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('Redirect sign-in successful:', result.user.email);
           // onAuthStateChanged will handle setting the user
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Redirect result error:', error);
         if (mounted) {
           sessionStorage.removeItem('auth_redirect_pending');
@@ -111,9 +150,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(requireAuth(), email, password);
       console.log('Sign in successful:', result.user.email);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
       console.error('Sign in error:', error);
       const errorMessages: Record<string, string> = {
         'auth/user-not-found': 'No account found with this email',
@@ -121,26 +161,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         'auth/invalid-email': 'Invalid email address',
         'auth/too-many-requests': 'Too many attempts. Please try again later',
       };
-      throw new Error(errorMessages[error.code] || error.message || 'Failed to sign in');
+      throw new Error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to sign in');
     }
   };
 
   const signUp = async (email: string, password: string, sendVerification = true) => {
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const result = await createUserWithEmailAndPassword(requireAuth(), email, password);
       console.log('Sign up successful:', result.user.email);
 
       if (sendVerification && result.user) {
         await sendEmailVerification(result.user, getVerificationSettings());
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
       console.error('Sign up error:', error);
       const errorMessages: Record<string, string> = {
         'auth/email-already-in-use': 'An account with this email already exists',
         'auth/weak-password': 'Password should be at least 6 characters',
         'auth/invalid-email': 'Invalid email address',
       };
-      throw new Error(errorMessages[error.code] || error.message || 'Failed to create account');
+      throw new Error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to create account');
     }
   };
 
@@ -156,29 +197,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (useRedirectMethod) {
         sessionStorage.setItem('auth_redirect_pending', 'true');
         setIsRedirectPending(true);
-        await signInWithRedirect(auth, provider, browserPopupRedirectResolver);
+        await signInWithRedirect(requireAuth(), provider, browserPopupRedirectResolver);
       } else {
         try {
-          const result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+          const result = await signInWithPopup(requireAuth(), provider, browserPopupRedirectResolver);
           console.log('Google sign-in successful:', result.user.email);
-        } catch (popupError: any) {
-          console.warn('Popup failed:', popupError.code, popupError.message);
+        } catch (popupError: unknown) {
+          const authError = getAuthError(popupError);
+          console.warn('Popup failed:', authError.code, authError.message);
 
           // If popup blocked or closed, fallback to redirect
-          if (popupError.code === 'auth/popup-blocked' ||
-              popupError.code === 'auth/popup-closed-by-user' ||
-              popupError.code === 'auth/cancelled-popup-request') {
+          if (authError.code === 'auth/popup-blocked' ||
+              authError.code === 'auth/popup-closed-by-user' ||
+              authError.code === 'auth/cancelled-popup-request') {
             console.log('Falling back to redirect...');
             sessionStorage.setItem('auth_redirect_pending', 'true');
             setIsRedirectPending(true);
-            await signInWithRedirect(auth, provider, browserPopupRedirectResolver);
+            await signInWithRedirect(requireAuth(), provider, browserPopupRedirectResolver);
           } else {
             throw popupError;
           }
         }
       }
-    } catch (error: any) {
-      console.error('Google sign in error:', error.code, error.message, error);
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
+      console.error('Google sign in error:', authError.code, authError.message, error);
       sessionStorage.removeItem('auth_redirect_pending');
       setIsRedirectPending(false);
 
@@ -192,7 +235,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         'auth/operation-not-allowed': 'Google sign-in is not enabled. Enable it in Firebase Console > Authentication > Sign-in method.',
       };
 
-      throw new Error(errorMessages[error.code] || error.message || 'Failed to sign in with Google');
+      throw new Error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to sign in with Google');
     }
   }, []);
 
@@ -203,37 +246,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(requireAuth(), email);
       console.log('Password reset email sent');
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
       console.error('Password reset error:', error);
       const errorMessages: Record<string, string> = {
         'auth/user-not-found': 'No account found with this email address',
         'auth/invalid-email': 'Invalid email address',
         'auth/too-many-requests': 'Too many attempts. Please try again later',
       };
-      throw new Error(errorMessages[error.code] || error.message || 'Failed to send reset email');
+      throw new Error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to send reset email');
     }
   };
 
   const confirmReset = async (oobCode: string, newPassword: string) => {
     try {
-      await confirmPasswordReset(auth, oobCode, newPassword);
+      await confirmPasswordReset(requireAuth(), oobCode, newPassword);
       console.log('Password reset confirmed');
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
       console.error('Confirm reset error:', error);
       const errorMessages: Record<string, string> = {
         'auth/expired-action-code': 'Reset link has expired. Please request a new one.',
         'auth/invalid-action-code': 'Invalid reset link. Please request a new one.',
         'auth/weak-password': 'Password should be at least 6 characters.',
       };
-      throw new Error(errorMessages[error.code] || error.message || 'Failed to reset password');
+      throw new Error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to reset password');
     }
   };
 
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth);
+      await firebaseSignOut(requireAuth());
       console.log('Sign out successful');
       // Clear any pending states
       sessionStorage.removeItem('auth_redirect_pending');

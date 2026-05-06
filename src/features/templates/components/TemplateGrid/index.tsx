@@ -3,6 +3,7 @@
 import { TemplateCard } from '../TemplateCard';
 import { TEMPLATES } from '@/features/templates/constants';
 import { TemplateType } from '@/features/templates/types/template.types';
+import { toast } from 'sonner';
 
 interface TemplateGridProps {
   selectedTemplate: TemplateType;
@@ -17,7 +18,14 @@ export const TemplateGrid = ({ selectedTemplate, onSelect }: TemplateGridProps) 
           key={template.id}
           template={template}
           isSelected={selectedTemplate === template.id}
-          onClick={() => onSelect(template.id)}
+          isLocked={!['love', 'sorry', 'birthday'].includes(template.id)}
+          onClick={() => {
+            if (!['love', 'sorry', 'birthday'].includes(template.id)) {
+              toast.info('Unlock Premium to use this template');
+              return;
+            }
+            onSelect(template.id);
+          }}
         />
       ))}
     </div>

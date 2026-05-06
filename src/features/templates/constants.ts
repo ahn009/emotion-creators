@@ -144,12 +144,12 @@ export const TEMPLATES: TemplateConfig[] = [
     ],
   },
   {
-    id: 'congratulations',
+    id: 'congrats',
     name: 'Congratulations',
     icon: '🎉',
-    description: 'Vibrant, exciting, celebratory - Celebrate their achievements',
+    description: 'Confetti, gold, uplifting - Celebrate their achievements',
     colorTheme: 'bright',
-    gradient: 'from-purple-500 via-fuchsia-500 to-pink-600',
+    gradient: 'from-emerald-500 via-yellow-500 to-amber-500',
     fields: [
       {
         name: 'sender',
@@ -179,12 +179,12 @@ export const TEMPLATES: TemplateConfig[] = [
     ],
   },
   {
-    id: 'encouragement',
-    name: 'Encouragement',
+    id: 'motivation',
+    name: "You've Got This",
     icon: '💪',
-    description: 'Uplifting, supportive, motivating - Inspire and support',
-    colorTheme: 'calm',
-    gradient: 'from-indigo-500 via-blue-500 to-purple-600',
+    description: 'Bold, energetic, orange/red - Inspire and support',
+    colorTheme: 'bright',
+    gradient: 'from-orange-500 via-red-500 to-rose-600',
     fields: [
       {
         name: 'sender',
@@ -204,7 +204,7 @@ export const TEMPLATES: TemplateConfig[] = [
       },
       {
         name: 'message',
-        label: 'Your Encouragement',
+        label: 'Your Motivation',
         type: 'textarea',
         placeholder: 'Lift their spirits...',
         required: true,
@@ -214,12 +214,12 @@ export const TEMPLATES: TemplateConfig[] = [
     ],
   },
   {
-    id: 'miss-you',
-    name: 'Miss You',
+    id: 'missing-you',
+    name: 'I Miss You',
     icon: '💭',
     description: 'Nostalgic, tender, heartfelt - Let them know you care',
-    colorTheme: 'warm',
-    gradient: 'from-violet-500 via-purple-500 to-indigo-600',
+    colorTheme: 'calm',
+    gradient: 'from-sky-400 via-blue-500 to-indigo-500',
     fields: [
       {
         name: 'sender',

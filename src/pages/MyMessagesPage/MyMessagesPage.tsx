@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageShell } from '@/components/layout';
 import { Container } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/shared/config/constants';
-import { useMessageStore } from '@/features/messages/stores/messageStore';
 import { useAuth } from '@/features/auth';
+import { deleteMessageDocument, listUserMessages } from '@/features/messages/api/firestoreMessages';
+import type { MessageData } from '@/shared/types';
 import {
   FileText,
   Sparkles,
@@ -25,10 +26,33 @@ import { toast } from 'sonner';
 
 const MyMessagesPage = () => {
   const { user } = useAuth();
-  const messages = useMessageStore((s) => s.messages);
-  const deleteMessage = useMessageStore((s) => s.deleteMessage);
+  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    let cancelled = false;
+    setIsLoading(true);
+
+    listUserMessages(user.uid)
+      .then((userMessages) => {
+        if (!cancelled) setMessages(userMessages);
+      })
+      .catch((error) => {
+        console.error('Could not load dashboard messages:', error);
+        toast.error('Could not load your messages');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   const getTemplateInfo = (templateId: string) => {
     return TEMPLATES.find((t) => t.id === templateId);
@@ -43,8 +67,9 @@ const MyMessagesPage = () => {
     });
   };
 
-  const handleDelete = (id: string) => {
-    deleteMessage(id);
+  const handleDelete = async (id: string) => {
+    await deleteMessageDocument(id);
+    setMessages((current) => current.filter((message) => message.id !== id));
     setConfirmDeleteId(null);
     toast.success('Message deleted');
   };
@@ -118,7 +143,11 @@ const MyMessagesPage = () => {
           )}
 
           <div className="max-w-3xl mx-auto">
-            {messages.length === 0 ? (
+            {isLoading ? (
+              <div className="glass-card rounded-3xl p-10 text-center text-text-secondary">
+                Loading your messages...
+              </div>
+            ) : messages.length === 0 ? (
               /* ── Empty State ── */
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

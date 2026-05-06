@@ -8,6 +8,8 @@ interface SEOProps {
   title: string;
   description: string;
   canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
   ogImage?: string;
   ogType?: string;
   noIndex?: boolean;
@@ -18,6 +20,8 @@ export const SEO = ({
   title,
   description,
   canonical,
+  ogTitle,
+  ogDescription,
   ogImage = DEFAULT_OG_IMAGE,
   ogType = 'website',
   noIndex = false,
@@ -36,11 +40,11 @@ export const SEO = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow'} />
 
       {/* Open Graph */}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={ogTitle ?? title} />
+      <meta property="og:description" content={ogDescription ?? description} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:image" content={ogImage} />
@@ -48,8 +52,8 @@ export const SEO = ({
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={ogTitle ?? title} />
+      <meta name="twitter:description" content={ogDescription ?? description} />
       <meta name="twitter:image" content={ogImage} />
 
       {/* Structured Data */}

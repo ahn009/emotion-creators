@@ -8,7 +8,8 @@ import { ROUTES } from '@/shared/config/constants';
 import { Mail, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { requireAuth } from '@/lib/firebase';
+import { getAuthError } from '@/features/auth/utils/auth.utils';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -26,16 +27,17 @@ const ForgotPasswordPage = () => {
     setLoading(true);
 
     try {
-      await sendPasswordResetEmail(auth, email.trim());
+      await sendPasswordResetEmail(requireAuth(), email.trim());
       setSent(true);
       toast.success('Password reset email sent!');
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
       const errorMessages: Record<string, string> = {
         'auth/user-not-found': 'No account found with this email address',
         'auth/invalid-email': 'Please enter a valid email address',
         'auth/too-many-requests': 'Too many attempts. Please try again later',
       };
-      toast.error(errorMessages[error.code] || error.message || 'Failed to send reset email');
+      toast.error(errorMessages[authError.code ?? ''] || authError.message || 'Failed to send reset email');
     } finally {
       setLoading(false);
     }
@@ -44,10 +46,11 @@ const ForgotPasswordPage = () => {
   const handleResend = async () => {
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email.trim());
+      await sendPasswordResetEmail(requireAuth(), email.trim());
       toast.success('Reset email sent again. Check your inbox.');
-    } catch (error: any) {
-      if (error.code === 'auth/too-many-requests') {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
+      if (authError.code === 'auth/too-many-requests') {
         toast.error('Too many attempts. Please wait before trying again.');
       } else {
         toast.error('Failed to resend. Please try again.');

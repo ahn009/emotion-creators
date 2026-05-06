@@ -1,16 +1,18 @@
 // Template Card component for selection
 
 import { motion } from 'framer-motion';
+import { Lock } from 'lucide-react';
 import { TemplateConfig } from '@/types/template';
 import { cn } from '@/shared/lib/cn';
 
 interface TemplateCardProps {
   template: TemplateConfig;
   isSelected: boolean;
+  isLocked?: boolean;
   onClick: () => void;
 }
 
-export const TemplateCard = ({ template, isSelected, onClick }: TemplateCardProps) => {
+export const TemplateCard = ({ template, isSelected, isLocked = false, onClick }: TemplateCardProps) => {
   return (
     <motion.button
       onClick={onClick}
@@ -21,7 +23,8 @@ export const TemplateCard = ({ template, isSelected, onClick }: TemplateCardProp
         'bg-card backdrop-blur-xl',
         isSelected 
           ? 'border-primary shadow-glow' 
-          : 'border-glass-border hover:border-primary/50'
+          : 'border-glass-border hover:border-primary/50',
+        isLocked && 'opacity-80'
       )}
       aria-pressed={isSelected}
       aria-label={`Select ${template.name} template`}
@@ -59,7 +62,9 @@ export const TemplateCard = ({ template, isSelected, onClick }: TemplateCardProp
             ? 'border-primary bg-primary' 
             : 'border-text-muted'
         )}>
-          {isSelected && (
+          {isLocked ? (
+            <Lock className="h-3 w-3 text-text-muted" />
+          ) : isSelected && (
             <motion.svg
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -73,6 +78,12 @@ export const TemplateCard = ({ template, isSelected, onClick }: TemplateCardProp
             </motion.svg>
           )}
         </div>
+        {isLocked && (
+          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs text-amber-200">
+            <Lock className="h-3 w-3" />
+            Premium
+          </div>
+        )}
       </div>
     </motion.button>
   );

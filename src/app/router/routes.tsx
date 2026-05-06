@@ -25,6 +25,7 @@ const HomePage = lazy(() => import('@/pages/HomePage/HomePage'));
 const SignInPage = lazy(() => import('@/pages/AuthPages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/AuthPages/SignUpPage'));
 const CreatePage = lazy(() => import('@/pages/CreatePage/CreatePage'));
+const CreateSuccessPage = lazy(() => import('@/pages/CreateSuccessPage/CreateSuccessPage'));
 const MessagePage = lazy(() => import('@/pages/MessagePage/MessagePage'));
 const PreviewPage = lazy(() => import('@/pages/PreviewPage/PreviewPage'));
 const TemplatesPage = lazy(() => import('@/pages/TemplatesPage/TemplatesPage'));
@@ -53,7 +54,9 @@ export function AppRoutes() {
         <Route path="/signin" element={<AuthGuard><SignInPage /></AuthGuard>} />
         <Route path="/signup" element={<AuthGuard><SignUpPage /></AuthGuard>} />
         <Route path="/create" element={<CreatePage />} />
+        <Route path="/create/success" element={<CreateSuccessPage />} />
         <Route path="/preview" element={<PreviewPage />} />
+        <Route path="/m/:slug" element={<MessagePage />} />
         <Route path="/message/:id" element={<MessagePage />} />
         <Route path="/templates" element={<TemplatesPage />} />
         <Route path="/terms" element={<TermsPage />} />
@@ -72,6 +75,7 @@ export function AppRoutes() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/account-settings" element={<AccountSettingsPage />} />
           <Route path="/my-messages" element={<MyMessagesPage />} />
+          <Route path="/dashboard" element={<MyMessagesPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

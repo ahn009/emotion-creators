@@ -5,5 +5,8 @@ export interface MessageFormData {
   sender: string;
   receiver: string;
   message: string;
-  options: Record<string, any>;
+  options: {
+    aiEnhanced?: boolean;
+    musicEnabled?: boolean;
+  };
 }

@@ -10,9 +10,13 @@ import { MessageForm } from '@/components/forms';
 import { FadeIn } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { useMessageStore } from '@/features/messages/stores/messageStore';
+import { createMessageDocument } from '@/features/messages/api/firestoreMessages';
+import type { MessageFormValues } from '@/features/messages/validators';
+import { useAuth } from '@/features/auth';
 import { ROUTES } from '@/shared/config';
 import { TEMPLATES } from '@/features/templates/constants';
 import { ArrowLeft, ArrowRight, Sparkles, Heart, Palette, PenTool } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Step = 'template' | 'message';
 
@@ -25,7 +29,9 @@ const tips = [
 const CreatePage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('template');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { currentTemplate, setTemplate, resetForm } = useMessageStore();
+  const { user } = useAuth();
 
   // Reset form state when entering create page so previous message data doesn't persist
   useEffect(() => {
@@ -37,8 +43,32 @@ const CreatePage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFormSubmit = () => {
-    navigate(ROUTES.PREVIEW);
+  const handleFormSubmit = async (data: MessageFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const id = await createMessageDocument({
+        template: currentTemplate,
+        senderName: data.sender,
+        recipientName: data.receiver,
+        messageBody: data.message,
+        userId: user?.uid ?? null,
+      });
+
+      if (!user) {
+        const existingIds = JSON.parse(localStorage.getItem('anonymous_message_ids') ?? '[]') as unknown;
+        const anonymousMessageIds = Array.isArray(existingIds)
+          ? existingIds.filter((value): value is string => typeof value === 'string')
+          : [];
+        localStorage.setItem('anonymous_message_ids', JSON.stringify([...anonymousMessageIds, id]));
+      }
+
+      navigate(`${ROUTES.CREATE_SUCCESS}?id=${id}`);
+    } catch (error) {
+      console.error('Message creation failed:', error);
+      toast.error('Could not create your message. Check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const selectedTemplate = TEMPLATES.find(t => t.id === currentTemplate);
@@ -46,7 +76,7 @@ const CreatePage = () => {
   return (
     <PageShell showGuestWarning>
       <SEO
-        title="Create Your Message - EmotionCreator"
+        title="Create a Message — EmotionCreator"
         description="Choose a template and write your heartfelt message. Share it with a unique link — free, private, no account required."
         canonical="/create"
         structuredData={{
@@ -189,7 +219,11 @@ const CreatePage = () => {
 
                   <div className="max-w-2xl mx-auto">
                     <div className="glass-card p-8 md:p-10 rounded-3xl mb-8">
-                      <MessageForm onSubmit={handleFormSubmit} />
+                      <MessageForm
+                        onSubmit={handleFormSubmit}
+                        isSubmitting={isSubmitting}
+                        submitLabel="Create Share Link"
+                      />
                     </div>
                   </div>
                 </motion.div>

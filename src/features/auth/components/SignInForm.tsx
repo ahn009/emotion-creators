@@ -7,6 +7,7 @@ import { PageShell } from '@/components/layout';
 import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
+import { getAuthError } from '@/features/auth/utils/auth.utils';
 import { ROUTES } from '@/shared/config/constants';
 import { Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -50,8 +51,8 @@ export default function SignInForm() {
         toast.success('Welcome!');
         navigate(ROUTES.CREATE);
       }
-    } catch (error: any) {
-      const errorMessage = (error as Error).message;
+    } catch (error: unknown) {
+      const errorMessage = getAuthError(error).message;
       if (!errorMessage?.includes('redirect')) {
         toast.error(errorMessage);
       }

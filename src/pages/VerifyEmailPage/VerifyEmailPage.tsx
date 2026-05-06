@@ -9,6 +9,7 @@ import { ROUTES } from '@/shared/config/constants';
 import { MailCheck, CheckCircle2, RefreshCw, AlertTriangle, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { reload } from 'firebase/auth';
+import { getAuthError } from '@/features/auth/utils/auth.utils';
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -60,8 +61,9 @@ const VerifyEmailPage = () => {
       await sendVerificationEmail();
       toast.success('Verification email sent! Check your inbox.');
       setCooldown(RESEND_COOLDOWN_SECONDS);
-    } catch (error: any) {
-      if (error.code === 'auth/too-many-requests') {
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
+      if (authError.code === 'auth/too-many-requests') {
         toast.error('Too many attempts. Please wait before trying again.');
         setCooldown(RESEND_COOLDOWN_SECONDS * 2);
       } else {

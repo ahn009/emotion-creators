@@ -225,8 +225,8 @@ const HomePage = () => {
   return (
     <PageShell>
       <SEO
-        title="EmotionCreator - Free Digital Message Templates"
-        description="Create beautiful, shareable digital messages for love, apologies, birthdays & more. Free, private, no signup needed. One emotion, one page, one link."
+        title="EmotionCreator — Free Digital Message Templates"
+        description="Create beautiful shareable message pages for love, apologies, birthdays and more. Free, private, no signup needed."
         canonical="/"
         structuredData={homepageStructuredData}
       />

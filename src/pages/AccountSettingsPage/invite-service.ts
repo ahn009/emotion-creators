@@ -1,5 +1,5 @@
 import { httpsCallable, getFunctions } from 'firebase/functions';
-import { app } from '@/lib/firebase';
+import { requireApp } from '@/lib/firebase';
 
 interface InvitePayload {
   friendName: string;
@@ -30,7 +30,7 @@ interface InvitePayload {
  */
 export async function sendInviteEmail(payload: InvitePayload): Promise<void> {
   try {
-    const functions = getFunctions(app);
+    const functions = getFunctions(requireApp());
     const callable = httpsCallable(functions, 'sendInviteEmail');
     await callable(payload);
   } catch (error: unknown) {

@@ -6,6 +6,7 @@ import { Container, SEO } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/features/auth';
+import { getAuthError } from '@/features/auth/utils/auth.utils';
 import { ROUTES } from '@/shared/config/constants';
 import { Mail, Lock, Eye, EyeOff, Heart, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -77,9 +78,9 @@ export default function SignUpForm() {
       }
       // For redirect method, the user will be redirected back to the app
       // and the AuthProvider's onAuthStateChanged will handle the user state
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Only show error if it's not the expected redirect case
-      const errorMessage = (error as Error).message;
+      const errorMessage = getAuthError(error).message;
       if (!errorMessage?.includes('redirect')) {
         toast.error(errorMessage);
       }

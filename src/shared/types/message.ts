@@ -1,6 +1,18 @@
 // Shared message type definitions
 
-export type TemplateType = 'love' | 'sorry' | 'birthday' | 'gratitude' | 'congratulations' | 'encouragement' | 'miss-you' | 'friendship' | 'get-well';
+export type TemplateType =
+  | 'love'
+  | 'sorry'
+  | 'birthday'
+  | 'gratitude'
+  | 'congrats'
+  | 'congratulations'
+  | 'encouragement'
+  | 'motivation'
+  | 'missing-you'
+  | 'miss-you'
+  | 'friendship'
+  | 'get-well';
 
 export interface MessageData {
   id: string;
@@ -15,6 +27,8 @@ export interface MessageData {
   };
   createdAt: string;
   views: number;
+  isPremium?: boolean;
+  userId?: string | null;
 }
 
 export interface MessageFormData {

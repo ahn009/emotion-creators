@@ -4,7 +4,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { MessageData } from '@/shared/types';
 import { cn } from '@/shared/lib/cn';
-import { Infinity, Users, Sparkles } from 'lucide-react';
+import { Infinity as InfinityIcon, Users, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
 import { ScrollProgress } from '@/components/motion/ScrollProgress';
 import { ParticleBackground } from '@/components/motion/ParticleBackground';
@@ -192,7 +192,7 @@ export const FriendshipTemplate = ({ message }: FriendshipTemplateProps) => {
               transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
               className="inline-block"
             >
-              <Infinity className="w-16 h-16 text-amber-400/50" />
+              <InfinityIcon className="w-16 h-16 text-amber-400/50" />
             </motion.div>
 
             <motion.h2

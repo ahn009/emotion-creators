@@ -10,7 +10,10 @@ interface FormData {
   sender: string;
   receiver: string;
   message: string;
-  options: Record<string, any>;
+  options: {
+    aiEnhanced?: boolean;
+    musicEnabled?: boolean;
+  };
 }
 
 interface MessageState {
