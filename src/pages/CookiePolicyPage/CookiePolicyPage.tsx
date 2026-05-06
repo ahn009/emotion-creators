@@ -139,39 +139,11 @@ const CookiePolicyPage = () => {
 
                   <div>
                     <h3 className="text-lg font-semibold text-foreground mb-2">
-                      Analytics Cookies (Optional)
+                      Analytics Cookies
                     </h3>
                     <p className="mb-3">
-                      We use Google Analytics to understand how visitors interact with the Service.
-                      These cookies collect anonymized and aggregated data.
+                      EmotionCreator does not set analytics cookies for visitor tracking.
                     </p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm border-collapse">
-                        <thead>
-                          <tr className="border-b border-glass-border">
-                            <th className="text-left py-2 pr-4 text-foreground">Cookie</th>
-                            <th className="text-left py-2 pr-4 text-foreground">Purpose</th>
-                            <th className="text-left py-2 text-foreground">Duration</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b border-glass-border/50">
-                            <td className="py-2 pr-4 font-mono text-xs">_ga</td>
-                            <td className="py-2 pr-4">
-                              Google Analytics - distinguishes unique users
-                            </td>
-                            <td className="py-2">2 years</td>
-                          </tr>
-                          <tr className="border-b border-glass-border/50">
-                            <td className="py-2 pr-4 font-mono text-xs">_ga_*</td>
-                            <td className="py-2 pr-4">
-                              Google Analytics 4 - maintains session state
-                            </td>
-                            <td className="py-2">2 years</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -185,18 +157,6 @@ const CookiePolicyPage = () => {
                     <strong className="text-foreground">Browser Settings:</strong> Most browsers
                     allow you to control cookies through their settings. You can block or delete
                     cookies, but this may affect the functionality of the Service.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Google Analytics Opt-Out:</strong> You can
-                    opt out of Google Analytics by installing the{' '}
-                    <a
-                      href="https://tools.google.com/dlpage/gaoptout"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Google Analytics Opt-out Browser Add-on
-                    </a>.
                   </p>
                   <p>
                     <strong className="text-foreground">Local Storage:</strong> You can clear local
@@ -217,8 +177,8 @@ const CookiePolicyPage = () => {
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>
-                      <strong className="text-foreground">Google (Firebase & Analytics):</strong>{' '}
-                      Authentication and usage analytics.{' '}
+                      <strong className="text-foreground">Google (Firebase Authentication):</strong>{' '}
+                      Authentication services.{' '}
                       <a
                         href="https://policies.google.com/technologies/cookies"
                         target="_blank"

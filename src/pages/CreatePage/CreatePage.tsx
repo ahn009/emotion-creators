@@ -59,7 +59,7 @@ const CreatePage = () => {
         const anonymousMessageIds = Array.isArray(existingIds)
           ? existingIds.filter((value): value is string => typeof value === 'string')
           : [];
-        localStorage.setItem('anonymous_message_ids', JSON.stringify([...anonymousMessageIds, id]));
+        localStorage.setItem('anonymous_message_ids', JSON.stringify([...new Set([...anonymousMessageIds, id])]));
       }
 
       navigate(`${ROUTES.CREATE_SUCCESS}?id=${id}`);

@@ -62,9 +62,42 @@ service cloud.firestore {
         return request.auth != null && resource.data.userId == request.auth.uid;
       }
 
+      function claimAnonymousMessage() {
+        return request.auth != null
+          && resource.data.userId == null
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['userId'])
+          && request.resource.data.userId == request.auth.uid;
+      }
+
+      function ownerEditsAllowedFields() {
+        return ownsMessage()
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'template',
+            'senderName',
+            'recipientName',
+            'messageBody',
+            'customColor',
+            'musicMood'
+          ])
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.isPremium == resource.data.isPremium
+          && request.resource.data.viewCount == resource.data.viewCount
+          && validTemplate()
+          && request.resource.data.senderName is string
+          && request.resource.data.senderName.size() > 0
+          && request.resource.data.senderName.size() <= 50
+          && request.resource.data.recipientName is string
+          && request.resource.data.recipientName.size() > 0
+          && request.resource.data.recipientName.size() <= 50
+          && request.resource.data.messageBody is string
+          && request.resource.data.messageBody.size() >= 10
+          && request.resource.data.messageBody.size() <= 2000;
+      }
+
       allow create: if validCreate();
       allow read: if true;
-      allow update: if viewCountOnlyIncrement() || ownsMessage();
+      allow update: if viewCountOnlyIncrement() || claimAnonymousMessage() || ownerEditsAllowedFields();
       allow delete: if ownsMessage();
     }
   }

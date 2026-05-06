@@ -27,10 +27,38 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-animation': ['framer-motion'],
-          'vendor-firebase': ['firebase/app', 'firebase/auth'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+
+          const getPackageChunk = () => {
+            const trimmed = id.split('node_modules/')[1];
+            if (!trimmed) return 'vendor-misc';
+            const [first, second] = trimmed.split('/');
+            const pkg = first.startsWith('@') && second ? `${first}/${second}` : first;
+            return `vendor-${pkg.replace('@', '').replace('/', '-')}`;
+          };
+
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router-dom/')) {
+            return 'vendor-react';
+          }
+
+          if (id.includes('/framer-motion/')) {
+            return 'vendor-animation';
+          }
+
+          if (id.includes('/firebase/')) {
+            return 'vendor-firebase';
+          }
+
+          if (id.includes('/@radix-ui/') || id.includes('/lucide-react/') || id.includes('/recharts/')) {
+            return 'vendor-ui';
+          }
+
+          if (id.includes('/zod/') || id.includes('/dompurify/') || id.includes('/uuid/')) {
+            return 'vendor-utils';
+          }
+
+          return getPackageChunk();
         },
       },
     },

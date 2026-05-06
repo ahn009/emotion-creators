@@ -26,6 +26,17 @@ export const config = {
   },
 };
 
+const readRawBody = async (request: VercelRequest): Promise<Buffer> => {
+  if (Buffer.isBuffer(request.body)) return request.body;
+  if (typeof request.body === 'string') return Buffer.from(request.body);
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of request as AsyncIterable<Buffer | string>) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+};
+
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   if (request.method !== 'POST') {
     response.status(405).send('Method not allowed');
@@ -40,11 +51,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
     return;
   }
 
-  const rawBody = typeof request.body === 'string'
-    ? request.body
-    : Buffer.isBuffer(request.body)
-      ? request.body
-      : Buffer.from(JSON.stringify(request.body ?? {}));
+  const rawBody = await readRawBody(request);
 
   let event: Stripe.Event;
   try {
@@ -57,8 +64,9 @@ export default async function handler(request: VercelRequest, response: VercelRe
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
     const messageId = session.metadata?.messageId;
+    const isPaid = session.payment_status === 'paid';
 
-    if (messageId) {
+    if (messageId && isPaid) {
       await adminDb.collection('messages').doc(messageId).update({ isPremium: true });
     }
   }

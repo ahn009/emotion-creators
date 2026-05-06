@@ -1,3 +1,6 @@
+import { createHash } from 'crypto';
+import { adminDb } from './_firebaseAdmin';
+
 type TemplatePromptKey = 'love' | 'sorry' | 'birthday' | 'gratitude' | 'congrats';
 type Tone = 'Romantic' | 'Funny' | 'Formal' | 'Heartfelt' | 'Casual';
 
@@ -30,7 +33,7 @@ const prompts: Record<TemplatePromptKey, string> = {
   congrats: 'You write enthusiastic congratulation messages. Be genuine and uplifting.',
 };
 
-const limiter = new Map<string, { date: string; count: number }>();
+const MAX_DAILY_REQUESTS = 3;
 
 const getClientIp = (request: VercelRequest): string => {
   const forwardedFor = request.headers['x-forwarded-for'];
@@ -38,32 +41,52 @@ const getClientIp = (request: VercelRequest): string => {
   return forwardedFor?.split(',')[0]?.trim() || request.socket?.remoteAddress || 'unknown';
 };
 
-const isAllowed = (ip: string): boolean => {
-  const today = new Date().toISOString().slice(0, 10);
-  const current = limiter.get(ip);
+const getRateLimitKey = (ip: string): string => {
+  const date = new Date().toISOString().slice(0, 10);
+  const hash = createHash('sha256').update(ip || 'unknown').digest('hex');
+  return `v1_${date}_${hash}`;
+};
 
-  if (!current || current.date !== today) {
-    limiter.set(ip, { date: today, count: 1 });
+const isAllowed = async (ip: string): Promise<boolean> => {
+  const key = getRateLimitKey(ip);
+  const ref = adminDb.collection('aiRateLimits').doc(key);
+
+  return adminDb.runTransaction(async (tx) => {
+    const snapshot = await tx.get(ref);
+    const count = snapshot.exists ? Number(snapshot.data()?.count ?? 0) : 0;
+    if (count >= MAX_DAILY_REQUESTS) return false;
+
+    tx.set(
+      ref,
+      {
+        count: count + 1,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
     return true;
-  }
-
-  if (current.count >= 3) return false;
-
-  limiter.set(ip, { ...current, count: current.count + 1 });
-  return true;
+  });
 };
 
 const parseBody = (body: unknown): GenerateMessageBody | null => {
   if (typeof body !== 'object' || body === null) return null;
   const record = body as Record<string, unknown>;
-  const template = typeof record.template === 'string' ? record.template : '';
-  const senderName = typeof record.senderName === 'string' ? record.senderName : '';
-  const recipientName = typeof record.recipientName === 'string' ? record.recipientName : '';
+  const template = typeof record.template === 'string' ? record.template.trim() : '';
+  const senderName = typeof record.senderName === 'string' ? record.senderName.trim() : '';
+  const recipientName = typeof record.recipientName === 'string' ? record.recipientName.trim() : '';
   const tone = typeof record.tone === 'string' ? record.tone : '';
-  const context = typeof record.context === 'string' ? record.context : undefined;
+  const context = typeof record.context === 'string' ? record.context.trim() : undefined;
   const validTones: Tone[] = ['Romantic', 'Funny', 'Formal', 'Heartfelt', 'Casual'];
 
-  if (!template || !senderName || !recipientName || !validTones.includes(tone as Tone)) {
+  if (
+    !template
+    || !senderName
+    || !recipientName
+    || senderName.length > 50
+    || recipientName.length > 50
+    || (context?.length ?? 0) > 500
+    || !validTones.includes(tone as Tone)
+  ) {
     return null;
   }
 
@@ -99,7 +122,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
   }
 
   const ip = getClientIp(request);
-  if (!isAllowed(ip)) {
+  if (!(await isAllowed(ip))) {
     response.status(429).json({ error: 'Free AI generation limit reached for today' });
     return;
   }
@@ -117,21 +140,33 @@ export default async function handler(request: VercelRequest, response: VercelRe
     'Keep it personal, polished, and under 180 words.',
   ].filter(Boolean).join('\n');
 
-  const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-3-5-20241022',
-      max_tokens: 360,
-      temperature: 0.8,
-      system: prompts[templateKey],
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  let anthropicResponse: Response;
+
+  try {
+    anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-3-5-20241022',
+        max_tokens: 360,
+        temperature: 0.8,
+        system: prompts[templateKey],
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+      signal: controller.signal,
+    });
+  } catch {
+    response.status(502).json({ error: 'AI generation failed' });
+    return;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!anthropicResponse.ok) {
     response.status(502).json({ error: 'AI generation failed' });

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Analytics } from '@vercel/analytics/react';
 import { AppProviders } from '@/app/providers';
 import { AppRoutes } from '@/app/router';
 import { ScrollToTop } from '@/components/ScrollToTop';
@@ -26,7 +25,6 @@ export default function App() {
             <AppRoutes />
           </AppProviders>
         </BrowserRouter>
-        <Analytics />
       </div>
     </>
   );

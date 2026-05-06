@@ -91,14 +91,13 @@ const PrivacyPage = () => {
                   </p>
                   <p>
                     <strong className="text-foreground">1.3 Usage Data:</strong> We automatically
-                    collect certain information when you access the Service, including:
+                    collect limited technical information when you access the Service, including:
                   </p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Browser type and version</li>
-                    <li>Pages visited and time spent on those pages</li>
                     <li>Device type and operating system</li>
-                    <li>Referring URL</li>
-                    <li>IP address (anonymized)</li>
+                    <li>Request metadata used for abuse prevention and reliability</li>
+                    <li>IP address (processed for security and rate limiting)</li>
                   </ul>
                   <p>
                     <strong className="text-foreground">1.4 Cookies and Local Storage:</strong> We
@@ -122,7 +121,6 @@ const PrivacyPage = () => {
                     <li>Process and host your emotion pages</li>
                     <li>Send you verification emails and important service updates</li>
                     <li>Respond to your inquiries and support requests</li>
-                    <li>Monitor and analyze usage trends to improve user experience</li>
                     <li>Detect, prevent, and address technical issues and abuse</li>
                   </ul>
                   <p>
@@ -149,11 +147,6 @@ const PrivacyPage = () => {
                       >
                         Google's Privacy Policy
                       </a>.
-                    </li>
-                    <li>
-                      <strong className="text-foreground">Google Analytics:</strong> Used to
-                      understand how users interact with the Service. Data is anonymized and
-                      aggregated. You may opt out using browser extensions or settings.
                     </li>
                     <li>
                       <strong className="text-foreground">Vercel:</strong> Our hosting provider.
@@ -183,12 +176,13 @@ const PrivacyPage = () => {
                   <p>
                     <strong className="text-foreground">4.2 Emotion Pages:</strong> Published emotion
                     pages remain accessible via their unique links until you delete them or close
-                    your account. Guest-created pages (without an account) are stored in browser
-                    local storage and are not persisted on our servers.
+                    your account. Guest-created pages are also stored on our servers so shared links
+                    can be opened by recipients.
                   </p>
                   <p>
-                    <strong className="text-foreground">4.3 Usage Data:</strong> Anonymized usage
-                    data may be retained indefinitely for analytics and service improvement purposes.
+                    <strong className="text-foreground">4.3 Technical Logs:</strong> Security and
+                    reliability logs may be retained for as long as reasonably required to protect
+                    the Service and investigate abuse.
                   </p>
                 </div>
               </div>
@@ -218,8 +212,8 @@ const PrivacyPage = () => {
                       export of your data in a machine-readable format.
                     </li>
                     <li>
-                      <strong className="text-foreground">Opt-Out:</strong> Opt out of analytics
-                      tracking and non-essential cookies.
+                      <strong className="text-foreground">Opt-Out:</strong> Control optional browser
+                      storage and cookies through your browser settings.
                     </li>
                     <li>
                       <strong className="text-foreground">Withdraw Consent:</strong> Withdraw your

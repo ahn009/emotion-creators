@@ -17,7 +17,7 @@ import {
 import { auth, firebaseConfigError, persistenceReady, requireAuth, requireDb } from '@/lib/firebase';
 import { getAuthError } from '@/features/auth/utils/auth.utils';
 import type { ActionCodeSettings } from 'firebase/auth';
-import { doc, writeBatch } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
 const getVerificationSettings = (): ActionCodeSettings => ({
   url: `${window.location.origin}/verify-email`,
@@ -67,11 +67,16 @@ const claimAnonymousMessages = async (userId: string) => {
   if (!messageIds.length) return;
 
   const db = requireDb();
-  const batch = writeBatch(db);
-  messageIds.forEach((messageId) => {
-    batch.update(doc(db, 'messages', messageId), { userId });
-  });
-  await batch.commit();
+  const results = await Promise.allSettled(
+    messageIds.map((messageId) => updateDoc(doc(db, 'messages', messageId), { userId }))
+  );
+
+  const failedIds = messageIds.filter((_, index) => results[index]?.status === 'rejected');
+  if (failedIds.length > 0) {
+    localStorage.setItem('anonymous_message_ids', JSON.stringify(failedIds));
+    return;
+  }
+
   localStorage.removeItem('anonymous_message_ids');
 };
 

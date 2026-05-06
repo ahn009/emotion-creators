@@ -10,8 +10,6 @@ import { Card } from '@/components/ui/card';
 import { ROUTES } from '@/shared/config';
 import { useAuth } from '@/features/auth';
 
-const SITE_URL = 'https://emotion-creators.vercel.app';
-
 const CreateSuccessPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -20,7 +18,11 @@ const CreateSuccessPage = () => {
   const { user } = useAuth();
   const id = searchParams.get('id') ?? '';
 
-  const shareUrl = useMemo(() => (id ? `${SITE_URL}/m/${id}` : ''), [id]);
+  const shareUrl = useMemo(() => {
+    if (!id) return '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://emotion-creators.vercel.app';
+    return `${origin}/m/${id}`;
+  }, [id]);
   const whatsappUrl = useMemo(() => {
     const text = `I made you a personal message: ${shareUrl}`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;

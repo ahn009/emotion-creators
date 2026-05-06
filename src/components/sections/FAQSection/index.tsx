@@ -8,11 +8,11 @@ import { ChevronDown, HelpCircle } from 'lucide-react';
 const faqs = [
   {
     question: 'Do I need an account to create a message?',
-    answer: 'No! You can create and share messages without signing up. However, if you close your browser without an account, your links will be lost. Sign up to keep your pages forever!',
+    answer: 'No. You can create and share messages without signing up. Creating an account lets you manage and delete your messages later from your dashboard.',
   },
   {
     question: 'How long do shared links last?',
-    answer: 'For guests, links last as long as your browser session. With an account, your links are permanent and will never expire.',
+    answer: 'Shared links remain accessible until they are deleted. If you sign in, you can manage and delete your links from your dashboard.',
   },
   {
     question: 'Can I customize the templates?',
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: 'Is my data private?',
-    answer: 'Absolutely! We don\'t track page visits, we don\'t sell your data, and your messages are yours alone. Privacy is core to our values.',
+    answer: 'We do not sell your data or use message content for ads. Access is link-based, so share message links only with people you trust.',
   },
   {
     question: 'Can recipients see who sent the message?',
@@ -32,7 +32,7 @@ const faqs = [
   },
   {
     question: "What's a private way to send a heartfelt message without signing up?",
-    answer: 'EmotionCreator lets you create and share beautiful digital messages without creating an account. Your messages are private — we don\'t track page visits or sell data. Just pick a template, write your message, and share the unique link.',
+    answer: 'EmotionCreator lets you create and share beautiful digital messages without creating an account. Your message is shared only through its unique link. Pick a template, write your message, and share the link.',
   },
   {
     question: 'Can I send a digital birthday message for free?',

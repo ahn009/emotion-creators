@@ -23,7 +23,7 @@ const features = [
   {
     icon: Shield,
     title: 'Privacy First',
-    description: 'No tracking, no analytics. Your emotions stay private.',
+    description: 'No ads, no data selling. Your message content stays private to your link.',
   },
   {
     icon: Share2,
@@ -55,7 +55,7 @@ const HomePage = () => {
         'No signup or account required',
         'No app download needed',
         '100% free with no hidden fees',
-        'Privacy-first — no tracking or analytics',
+        'Privacy-first — no ads and no data selling',
         'Fully responsive on mobile, tablet, and desktop',
         'Anonymous or named messages',
       ],
@@ -69,7 +69,7 @@ const HomePage = () => {
           name: 'Do I need an account to create a message?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'No! You can create and share messages without signing up. However, if you close your browser without an account, your links will be lost. Sign up to keep your pages forever!',
+            text: 'No. You can create and share messages without signing up. Creating an account helps you manage and delete your messages later from your dashboard.',
           },
         },
         {
@@ -77,7 +77,7 @@ const HomePage = () => {
           name: 'How long do shared links last?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'For guests, links last as long as your browser session. With an account, your links are permanent and will never expire.',
+            text: 'Shared links remain accessible until they are deleted. If you sign in, you can manage and delete your links from your dashboard.',
           },
         },
         {
@@ -93,7 +93,7 @@ const HomePage = () => {
           name: 'Is my data private?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: "Absolutely! We don't track page visits, we don't sell your data, and your messages are yours alone. Privacy is core to our values.",
+            text: "We don't sell your data or use your message content for ads. Access is link-based, so share links only with people you trust.",
           },
         },
         {
@@ -117,7 +117,7 @@ const HomePage = () => {
           name: "What's a private way to send a heartfelt message without signing up?",
           acceptedAnswer: {
             '@type': 'Answer',
-            text: "EmotionCreator lets you create and share beautiful digital messages without creating an account. Your messages are private — we don't track page visits or sell data. Just pick a template, write your message, and share the unique link.",
+            text: "EmotionCreator lets you create and share beautiful digital messages without creating an account. Your message is shared only through its unique link. Just pick a template, write your message, and share the link.",
           },
         },
         {

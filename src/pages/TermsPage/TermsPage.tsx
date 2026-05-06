@@ -112,7 +112,7 @@ const TermsPage = () => {
                     Your privacy is important to us. Please review our <Link to={ROUTES.PRIVACY} className="text-primary hover:underline">Privacy Policy</Link> to understand how we collect, use, and protect your information.
                   </p>
                   <p>
-                    <strong className="text-foreground">3.1 Data Collection:</strong> We collect minimal data necessary to provide the Service, including email addresses for account creation and analytics data to improve the Service.
+                    <strong className="text-foreground">3.1 Data Collection:</strong> We collect minimal data necessary to provide the Service, including account email addresses, message content required for hosting, and technical logs needed for security and reliability.
                   </p>
                   <p>
                     <strong className="text-foreground">3.2 Email Verification:</strong> We may send verification emails to confirm your email address and important service updates.

@@ -101,20 +101,22 @@ export const createMessageDocument = async (input: CreateMessageInput): Promise<
   const db = requireDb();
   const id = uuidv4();
   const messageRef = doc(db, MESSAGES_COLLECTION, id);
-
-  await setDoc(messageRef, {
+  const payload: Record<string, unknown> = {
     id,
     template: normalizeTemplate(input.template),
     senderName: sanitizeText(input.senderName.trim()),
     recipientName: sanitizeText(input.recipientName.trim()),
     messageBody: sanitizeText(input.messageBody.trim()),
-    customColor: input.customColor,
-    musicMood: input.musicMood,
     createdAt: serverTimestamp(),
     viewCount: 0,
     isPremium: input.isPremium ?? false,
     userId: input.userId ?? null,
-  });
+  };
+
+  if (input.customColor) payload.customColor = input.customColor;
+  if (input.musicMood) payload.musicMood = input.musicMood;
+
+  await setDoc(messageRef, payload);
 
   return id;
 };
@@ -150,9 +152,4 @@ export const listUserMessages = async (userId: string): Promise<MessageData[]> =
 export const deleteMessageDocument = async (id: string): Promise<void> => {
   const db = requireDb();
   await deleteDoc(doc(db, MESSAGES_COLLECTION, id));
-};
-
-export const markMessagePremium = async (id: string): Promise<void> => {
-  const db = requireDb();
-  await updateDoc(doc(db, MESSAGES_COLLECTION, id), { isPremium: true });
 };
