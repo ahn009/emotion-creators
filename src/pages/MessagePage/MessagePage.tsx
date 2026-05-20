@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Copy, MessageCircle, Send, Share2, Twitter } from 'lucide-react';
+import { toast } from 'sonner';
 import { TemplatePreview } from '@/features/templates/components/TemplatePreview';
 import { SEO } from '@/components/common';
 import {
@@ -11,8 +13,64 @@ import {
   type FirestoreMessage,
 } from '@/features/messages/api/firestoreMessages';
 import type { MessageData } from '@/shared/types';
+import { buildShareUrl } from '@/shared/lib/utm';
 
 const SITE_URL = 'https://emotion-creators.vercel.app';
+
+const ShareButtons = ({ messageId }: { messageId: string }) => {
+  const whatsappUrl = buildShareUrl(messageId, 'whatsapp');
+  const twitterUrl = buildShareUrl(messageId, 'twitter');
+  const telegramUrl = buildShareUrl(messageId, 'telegram');
+
+  const handleCopy = async () => {
+    const url = buildShareUrl(messageId, 'copy');
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Could not copy link');
+    }
+  };
+
+  return (
+    <div className="relative z-20 border-t border-white/10 bg-background/95 px-4 py-4 backdrop-blur">
+      <div className="max-w-lg mx-auto flex flex-col items-center gap-3">
+        <p className="text-xs text-text-muted flex items-center gap-1.5">
+          <Share2 className="h-3 w-3" /> Share this message
+        </p>
+        <div className="flex gap-2 flex-wrap justify-center">
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(whatsappUrl)}`}
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+          </a>
+          <a
+            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(twitterUrl)}&text=${encodeURIComponent('Someone sent me something 💌')}`}
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition-colors"
+          >
+            <Twitter className="h-3.5 w-3.5" /> X
+          </a>
+          <a
+            href={`https://t.me/share/url?url=${encodeURIComponent(telegramUrl)}`}
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition-colors"
+          >
+            <Send className="h-3.5 w-3.5" /> Telegram
+          </a>
+          <button
+            onClick={handleCopy}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition-colors"
+          >
+            <Copy className="h-3.5 w-3.5" /> Copy Link
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const MessagePage = () => {
   const { slug, id } = useParams<{ slug?: string; id?: string }>();
@@ -120,13 +178,14 @@ const MessagePage = () => {
         noIndex
       />
       <TemplatePreview message={message} />
+      <ShareButtons messageId={messageId} />
       {!message.isPremium && (
         <div className="relative z-20 border-t border-white/10 bg-background/95 px-4 py-5 text-center backdrop-blur">
           <Link
             to="/create"
             className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
-            Created with EmotionCreator ✨ — Make yours free →
+            Made with EmotionCreator ❤️ — Make yours free →
           </Link>
         </div>
       )}

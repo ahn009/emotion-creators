@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Copy, ExternalLink, MessageCircle, Sparkles } from 'lucide-react';
+import { Check, Copy, ExternalLink, MessageCircle, Send, Sparkles, Twitter } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageShell } from '@/components/layout';
 import { Container, SEO } from '@/components/common';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ROUTES } from '@/shared/config';
 import { useAuth } from '@/features/auth';
+import { buildShareUrl } from '@/shared/lib/utm';
 
 const CreateSuccessPage = () => {
   const [searchParams] = useSearchParams();
@@ -23,10 +24,30 @@ const CreateSuccessPage = () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://emotion-creators.vercel.app';
     return `${origin}/m/${id}`;
   }, [id]);
+
   const whatsappUrl = useMemo(() => {
-    const text = `I made you a personal message: ${shareUrl}`;
-    return `https://wa.me/?text=${encodeURIComponent(text)}`;
-  }, [shareUrl]);
+    if (!id) return '';
+    const url = buildShareUrl(id, 'whatsapp');
+    return `https://wa.me/?text=${encodeURIComponent(`I made you a personal message: ${url}`)}`;
+  }, [id]);
+
+  const twitterUrl = useMemo(() => {
+    if (!id) return '';
+    const url = buildShareUrl(id, 'twitter');
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(`I made you something special 💌`)}&url=${encodeURIComponent(url)}`;
+  }, [id]);
+
+  const facebookUrl = useMemo(() => {
+    if (!id) return '';
+    const url = buildShareUrl(id, 'facebook');
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  }, [id]);
+
+  const telegramUrl = useMemo(() => {
+    if (!id) return '';
+    const url = buildShareUrl(id, 'telegram');
+    return `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('I made you a personal message 💌')}`;
+  }, [id]);
 
   const handleCopy = async () => {
     if (!shareUrl) return;
@@ -125,14 +146,35 @@ const CreateSuccessPage = () => {
             </div>
           </Card>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Button asChild variant="outline" size="lg" className="gap-2">
               <a href={whatsappUrl} target="_blank" rel="noreferrer">
                 <MessageCircle className="h-4 w-4" />
-                Share on WhatsApp
+                WhatsApp
               </a>
             </Button>
-            <Button size="lg" className="gap-2" onClick={() => navigate(`/m/${id}`)}>
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <a href={twitterUrl} target="_blank" rel="noreferrer">
+                <Twitter className="h-4 w-4" />
+                X / Twitter
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <a href={telegramUrl} target="_blank" rel="noreferrer">
+                <Send className="h-4 w-4" />
+                Telegram
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <a href={facebookUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="h-4 w-4" />
+                Facebook
+              </a>
+            </Button>
+          </div>
+
+          <div className="mt-4">
+            <Button size="lg" className="w-full gap-2" onClick={() => navigate(`/m/${id}`)}>
               <ExternalLink className="h-4 w-4" />
               Preview your message
             </Button>

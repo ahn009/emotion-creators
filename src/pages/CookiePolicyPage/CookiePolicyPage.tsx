@@ -139,10 +139,21 @@ const CookiePolicyPage = () => {
 
                   <div>
                     <h3 className="text-lg font-semibold text-foreground mb-2">
-                      Analytics Cookies
+                      Analytics (Privacy-Preserving)
                     </h3>
                     <p className="mb-3">
-                      EmotionCreator does not set analytics cookies for visitor tracking.
+                      We use{' '}
+                      <a
+                        href="https://vercel.com/analytics"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Vercel Analytics
+                      </a>{' '}
+                      to understand aggregate usage patterns. Vercel Analytics does not use cookies
+                      and does not track individual users across sites. No personally identifiable
+                      information is collected.
                     </p>
                   </div>
                 </div>
@@ -186,6 +197,19 @@ const CookiePolicyPage = () => {
                         className="text-primary hover:underline"
                       >
                         Google's Cookie Policy
+                      </a>
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Stripe:</strong>{' '}
+                      Payment processing for premium features. Stripe may set cookies to prevent
+                      fraud and remember checkout state.{' '}
+                      <a
+                        href="https://stripe.com/cookie-settings"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Stripe's Cookie Policy
                       </a>
                     </li>
                   </ul>

@@ -137,8 +137,8 @@ const PrivacyPage = () => {
                   <p>We use the following third-party services:</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>
-                      <strong className="text-foreground">Firebase Authentication:</strong> Provided
-                      by Google LLC, used for account management and authentication. Subject to{' '}
+                      <strong className="text-foreground">Firebase (Google LLC):</strong> Used for
+                      authentication, account management, and data storage (Firestore). Subject to{' '}
                       <a
                         href="https://policies.google.com/privacy"
                         target="_blank"
@@ -149,8 +149,8 @@ const PrivacyPage = () => {
                       </a>.
                     </li>
                     <li>
-                      <strong className="text-foreground">Vercel:</strong> Our hosting provider.
-                      Subject to{' '}
+                      <strong className="text-foreground">Vercel:</strong> Our hosting provider,
+                      including Vercel Analytics for anonymous usage metrics. Subject to{' '}
                       <a
                         href="https://vercel.com/legal/privacy-policy"
                         target="_blank"
@@ -158,6 +158,33 @@ const PrivacyPage = () => {
                         className="text-primary hover:underline"
                       >
                         Vercel's Privacy Policy
+                      </a>.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Stripe:</strong> Used to process payments
+                      for premium features. When you upgrade a message, your payment information is
+                      handled directly by Stripe and is never stored on our servers. Subject to{' '}
+                      <a
+                        href="https://stripe.com/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Stripe's Privacy Policy
+                      </a>.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Anthropic Claude (AI):</strong> Used to
+                      assist with message generation when you request AI-generated suggestions.
+                      Message content submitted to this feature is processed by Anthropic. Subject
+                      to{' '}
+                      <a
+                        href="https://www.anthropic.com/legal/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Anthropic's Privacy Policy
                       </a>.
                     </li>
                   </ul>
